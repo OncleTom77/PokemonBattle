@@ -22,4 +22,12 @@ public class Pokemon {
     public static Pokemon from(String name, Type[] types, BaseStats baseStats, IndividualValues individualValues, EffortValues effortValues, Level level, Nature nature, Move[] moves) {
         return new Pokemon(name, types, baseStats, new VariantStats(individualValues, effortValues, level, nature), moves);
     }
+
+    public boolean isKO() {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getSpeed() {
+        throw new UnsupportedOperationException();
+    }
 }
