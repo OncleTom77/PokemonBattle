@@ -10,7 +10,7 @@ All the data game described here has been found on the [dragonflycave](https://w
 ## What do you have to do ?
 
 The goal is to determine the winner of a battle between two Pokémon.
-A battle is divided in turns, where a Pokémon, as the attacker, used an ability against the other Pokémon, defined as the target.
+A battle is divided in turns, where a Pokémon, as the attacker, used a move against the other Pokémon, defined as the target.
 
 The main mechanics that come into play during a typical turn of a battle are :
 * Turn Order

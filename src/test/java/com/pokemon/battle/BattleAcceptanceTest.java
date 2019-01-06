@@ -19,8 +19,11 @@ public class BattleAcceptanceTest {
                 BaseStats.of(45, 49, 49, 65, 65, 45),
                 IndividualValues.of(28, 4, 17, 30, 27, 31),
                 EffortValues.of(0, 0, 0, 0, 0, 0),
-                Level.of(20),
-                Nature.Hardy
+                Level.of(15),
+                Nature.Hardy,
+                new Move[]{
+                        Move.VineWhip
+                }
         );
         Pokemon charmander = Pokemon.from(
                 "Charmander",
@@ -30,11 +33,12 @@ public class BattleAcceptanceTest {
                 BaseStats.of(39, 52, 43, 60, 50, 65),
                 IndividualValues.of(8, 14, 1, 31, 23, 5),
                 EffortValues.of(0, 0, 0, 0, 0, 0),
-                Level.of(20),
-                Nature.Docile
+                Level.of(15),
+                Nature.Docile,
+                new Move[]{
+                        Move.Ember
+                }
         );
-
-        String[] toto = new String[]{"", ""};
 
         Pokemon winner = new Battle().fight(bulbasaur, charmander);
 
