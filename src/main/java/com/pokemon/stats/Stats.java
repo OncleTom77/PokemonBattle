@@ -1,6 +1,8 @@
 package com.pokemon.stats;
 
-abstract class Stats {
+import java.util.Objects;
+
+public class Stats {
     private final int hp;
     private final int attack;
     private final int defense;
@@ -15,5 +17,63 @@ abstract class Stats {
         this.specialAttack = specialAttack;
         this.specialDefense = specialDefense;
         this.speed = speed;
+    }
+
+    public static Stats of(int hp, int attack, int defense, int specialAttack, int specialDefense, int speed) {
+        return new Stats(hp, attack, defense, specialAttack, specialDefense, speed);
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public int getAttack() {
+        return attack;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public int getSpecialAttack() {
+        return specialAttack;
+    }
+
+    public int getSpecialDefense() {
+        return specialDefense;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Stats stats = (Stats) o;
+        return hp == stats.hp &&
+                attack == stats.attack &&
+                defense == stats.defense &&
+                specialAttack == stats.specialAttack &&
+                specialDefense == stats.specialDefense &&
+                speed == stats.speed;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hp, attack, defense, specialAttack, specialDefense, speed);
+    }
+
+    @Override
+    public String toString() {
+        return "Stats{" +
+                "hp=" + hp +
+                ", attack=" + attack +
+                ", defense=" + defense +
+                ", specialAttack=" + specialAttack +
+                ", specialDefense=" + specialDefense +
+                ", speed=" + speed +
+                '}';
     }
 }

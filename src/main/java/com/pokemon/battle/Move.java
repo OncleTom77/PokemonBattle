@@ -18,7 +18,14 @@ public enum Move {
             40,
             100,
             25
-    );
+    ),
+    Gust("Gust",
+            "A gust of wind is whipped up by wings and launched at the target to inflict damage.",
+            Type.Flying,
+            DamageCategory.Special,
+            40,
+            100,
+            35);
 
     Move(String name, String description, Type type, DamageCategory damageCategory, int power, int accuracy, int powerPoint) {
     }

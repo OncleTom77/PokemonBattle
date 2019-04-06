@@ -10,4 +10,8 @@ public class Level {
     public static Level of(int level) {
         return new Level(level);
     }
+
+    public int getLevel() {
+        return level;
+    }
 }

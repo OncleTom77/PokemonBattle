@@ -16,28 +16,30 @@ public class BattleAcceptanceTest {
                         Type.Grass,
                         Type.Poison
                 },
-                BaseStats.of(45, 49, 49, 65, 65, 45),
-                IndividualValues.of(28, 4, 17, 30, 27, 31),
-                EffortValues.of(0, 0, 0, 0, 0, 0),
-                Level.of(15),
                 Nature.Hardy,
+                Stats.of(45, 49, 49, 65, 65, 45),
+                Stats.of(28, 4, 17, 30, 27, 31),
+                Stats.of(0, 0, 0, 0, 0, 0),
+                Level.of(15),
                 new Move[]{
                         Move.VineWhip
-                }
+                },
+                new ComputedStatsPokemonFactory()
         );
         Pokemon charmander = Pokemon.from(
                 "Charmander",
                 new Type[]{
                         Type.Fire
                 },
-                BaseStats.of(39, 52, 43, 60, 50, 65),
-                IndividualValues.of(8, 14, 1, 31, 23, 5),
-                EffortValues.of(0, 0, 0, 0, 0, 0),
-                Level.of(15),
                 Nature.Docile,
+                Stats.of(39, 52, 43, 60, 50, 65),
+                Stats.of(8, 14, 1, 31, 23, 5),
+                Stats.of(0, 0, 0, 0, 0, 0),
+                Level.of(15),
                 new Move[]{
                         Move.Ember
-                }
+                },
+                new ComputedStatsPokemonFactory()
         );
 
         Pokemon winner = new Battle().fight(bulbasaur, charmander);

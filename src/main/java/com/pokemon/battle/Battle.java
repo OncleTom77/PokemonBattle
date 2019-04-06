@@ -17,23 +17,35 @@ class Battle {
     }
 
     Pokemon fight(Pokemon a, Pokemon b) {
+        ComputedStatsPokemon firstComputedStatsPokemon = a.getComputedStatsPokemon();
+        ComputedStatsPokemon secondComputedStatsPokemon = b.getComputedStatsPokemon();
 
         while (true) {
-            Pokemon first = a.getSpeed() > b.getSpeed() ? a : b;
-            Pokemon second = first.equals(a) ? b : a;
+            ComputedStatsPokemon first;
+            ComputedStatsPokemon second;
 
-            Optional<Pokemon> optionalWinner = resolveTurnWithOptionalWinner(first, second);
-            if (optionalWinner.isPresent()) return optionalWinner.get();
+            if (firstComputedStatsPokemon.isFasterThan(secondComputedStatsPokemon)) {
+                first = firstComputedStatsPokemon;
+                second = secondComputedStatsPokemon;
+            } else {
+                first = secondComputedStatsPokemon;
+                second = firstComputedStatsPokemon;
+            }
 
-            optionalWinner = resolveTurnWithOptionalWinner(second, first);
-            if (optionalWinner.isPresent()) return optionalWinner.get();
+            turnFactory.createFrom(first, second)
+                    .compute();
+
+            if (second.isKO()) {
+                return a;
+            }
+
+            turnFactory.createFrom(second, first)
+                    .compute();
+
+            if (first.isKO()) {
+                return b;
+            }
         }
     }
 
-    private Optional<Pokemon> resolveTurnWithOptionalWinner(Pokemon attacker, Pokemon target) {
-        turnFactory.createFrom(attacker, target)
-                .compute();
-
-        return Optional.ofNullable(target.isKO() ? attacker : null);
-    }
 }
