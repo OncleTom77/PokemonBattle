@@ -8,19 +8,39 @@ import java.util.Objects;
 import java.util.Random;
 
 public class ComputedStatsPokemon {
+    private final Pokemon pokemon;
     private final Stats stats;
     private final Random randomGenerator;
 
-    private ComputedStatsPokemon(Stats stats, Random randomGenerator) {
+    private ComputedStatsPokemon(Pokemon pokemon, Stats stats, Random randomGenerator) {
+        this.pokemon = pokemon;
         this.stats = stats;
         this.randomGenerator = randomGenerator;
     }
 
-    public static ComputedStatsPokemon from(Stats stats, Random randomGenerator) {
-        return new ComputedStatsPokemon(stats, randomGenerator);
+    protected ComputedStatsPokemon(ComputedStatsPokemon computedStatsPokemon) {
+        this.pokemon = computedStatsPokemon.pokemon;
+        this.stats = computedStatsPokemon.stats;
+        this.randomGenerator = computedStatsPokemon.randomGenerator;
     }
 
-    public static ComputedStatsPokemon of(Pokemon pokemon) {
+    public static ComputedStatsPokemon from(Pokemon pokemon, Stats stats, Random randomGenerator) {
+        return new ComputedStatsPokemon(pokemon, stats, randomGenerator);
+    }
+
+    public static ComputedStatsPokemon from(Pokemon pokemon, Random randomGenerator) {
+        return from(pokemon, getComputedStats(pokemon), randomGenerator);
+    }
+
+    public static ComputedStatsPokemon from(Pokemon pokemon, Stats stats) {
+        return from(pokemon, stats, new Random());
+    }
+
+    public static ComputedStatsPokemon from(Pokemon pokemon) {
+        return from(pokemon, new Random());
+    }
+
+    private static Stats getComputedStats(Pokemon pokemon) {
         int hp = computeHPFrom(
                 pokemon.getBaseStats().getHp(),
                 pokemon.getVariantStats().getIndividualValues().getHp(),
@@ -68,10 +88,7 @@ public class ComputedStatsPokemon {
                 pokemon.getNature().getMultiplierValueFor(Nature.Stat.Speed)
         );
 
-        return from(
-                Stats.of(hp, attack, defense, specialAttack, specialDefense, speed),
-                new Random()
-        );
+        return Stats.of(hp, attack, defense, specialAttack, specialDefense, speed);
     }
 
     private static int computeOtherStatsFrom(int base, int individual, int effort, int level, float natureMultiplier) {
@@ -95,23 +112,29 @@ public class ComputedStatsPokemon {
         throw new UnsupportedOperationException();
     }
 
+    public Pokemon getPokemon() {
+        return pokemon;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ComputedStatsPokemon that = (ComputedStatsPokemon) o;
-        return Objects.equals(stats, that.stats);
+        return Objects.equals(pokemon, that.pokemon) &&
+                Objects.equals(stats, that.stats);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stats);
+        return Objects.hash(pokemon, stats);
     }
 
     @Override
     public String toString() {
         return "ComputedStatsPokemon{" +
-                "stats=" + stats +
+                "pokemon=" + pokemon +
+                ", stats=" + stats +
                 '}';
     }
 }

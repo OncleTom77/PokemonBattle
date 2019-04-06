@@ -7,43 +7,38 @@ import java.util.Optional;
 class Battle {
 
     private final TurnFactory turnFactory;
+    private final PokemonFactory pokemonFactory;
 
     Battle() {
         turnFactory = new TurnFactory();
+        pokemonFactory = new PokemonFactory();
     }
 
-    Battle(TurnFactory turnFactory) {
+    Battle(TurnFactory turnFactory, PokemonFactory pokemonFactory) {
         this.turnFactory = turnFactory;
+        this.pokemonFactory = pokemonFactory;
     }
 
     Pokemon fight(Pokemon a, Pokemon b) {
-        ComputedStatsPokemon firstComputedStatsPokemon = a.getComputedStatsPokemon();
-        ComputedStatsPokemon secondComputedStatsPokemon = b.getComputedStatsPokemon();
+        ComputedStatsPokemon aComputedStatsPokemon = a.getComputedStatsPokemon();
+        ComputedStatsPokemon bComputedStatsPokemon = b.getComputedStatsPokemon();
 
         while (true) {
-            ComputedStatsPokemon first;
-            ComputedStatsPokemon second;
+            InTurnPokemon aInTurnPokemon = pokemonFactory.createFrom(
+                    aComputedStatsPokemon,
+                    aComputedStatsPokemon.getPokemon().getMoves()[0]
+            );
 
-            if (firstComputedStatsPokemon.isFasterThan(secondComputedStatsPokemon)) {
-                first = firstComputedStatsPokemon;
-                second = secondComputedStatsPokemon;
-            } else {
-                first = secondComputedStatsPokemon;
-                second = firstComputedStatsPokemon;
-            }
+            InTurnPokemon bInTurnPokemon = pokemonFactory.createFrom(
+                    bComputedStatsPokemon,
+                    bComputedStatsPokemon.getPokemon().getMoves()[0]
+            );
 
-            turnFactory.createFrom(first, second)
-                    .compute();
+            Optional<InTurnPokemon> potentialWinner = turnFactory.createFrom(aInTurnPokemon, bInTurnPokemon)
+                    .resolveWithPotentialWinner();
 
-            if (second.isKO()) {
-                return a;
-            }
-
-            turnFactory.createFrom(second, first)
-                    .compute();
-
-            if (first.isKO()) {
-                return b;
+            if (potentialWinner.isPresent()) {
+                return potentialWinner.get().getPokemon();
             }
         }
     }

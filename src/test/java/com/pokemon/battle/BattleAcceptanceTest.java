@@ -24,7 +24,7 @@ public class BattleAcceptanceTest {
                 new Move[]{
                         Move.VineWhip
                 },
-                new ComputedStatsPokemonFactory()
+                new PokemonFactory()
         );
         Pokemon charmander = Pokemon.from(
                 "Charmander",
@@ -39,7 +39,7 @@ public class BattleAcceptanceTest {
                 new Move[]{
                         Move.Ember
                 },
-                new ComputedStatsPokemonFactory()
+                new PokemonFactory()
         );
 
         Pokemon winner = new Battle().fight(bulbasaur, charmander);

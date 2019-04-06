@@ -27,9 +27,10 @@ public class ComputedStatPokemonTest {
                 new Move[]{
                         Move.Gust
                 },
-                new ComputedStatsPokemonFactory()
+                new PokemonFactory()
         );
         ComputedStatsPokemon expectedComputedStatsPokemon = ComputedStatsPokemon.from(
+                pokemon,
                 Stats.of(
                         141,
                         48,
@@ -37,10 +38,10 @@ public class ComputedStatPokemonTest {
                         152,
                         104,
                         129
-                ),
-                new Random());
+                )
+        );
 
-        ComputedStatsPokemon computedStatsPokemon = ComputedStatsPokemon.of(pokemon);
+        ComputedStatsPokemon computedStatsPokemon = ComputedStatsPokemon.from(pokemon);
 
         assertThat(computedStatsPokemon).isEqualTo(expectedComputedStatsPokemon);
     }
@@ -49,9 +50,11 @@ public class ComputedStatPokemonTest {
     public void should_be_faster_if_speed_stat_is_greater() {
         Random randomGenerator = mock(Random.class);
         ComputedStatsPokemon first = ComputedStatsPokemon.from(
+                null,
                 Stats.of(1, 1, 1, 1, 1, 2),
                 randomGenerator);
         ComputedStatsPokemon second = ComputedStatsPokemon.from(
+                null,
                 Stats.of(1, 1, 1, 1, 1, 1),
                 randomGenerator);
 
@@ -65,9 +68,11 @@ public class ComputedStatPokemonTest {
     public void should_be_faster_if_speed_stat_is_equal_but_random_number_is_equal_to_zero() {
         Random randomGenerator = mock(Random.class);
         ComputedStatsPokemon first = ComputedStatsPokemon.from(
+                null,
                 Stats.of(1, 1, 1, 1, 1, 1),
                 randomGenerator);
         ComputedStatsPokemon second = ComputedStatsPokemon.from(
+                null,
                 Stats.of(1, 1, 1, 1, 1, 1),
                 randomGenerator);
 
@@ -83,9 +88,11 @@ public class ComputedStatPokemonTest {
     public void should_be_slower_if_speed_stat_is_equal_but_random_number_is_equal_to_1() {
         Random randomGenerator = mock(Random.class);
         ComputedStatsPokemon first = ComputedStatsPokemon.from(
+                null,
                 Stats.of(1, 1, 1, 1, 1, 1),
                 randomGenerator);
         ComputedStatsPokemon second = ComputedStatsPokemon.from(
+                null,
                 Stats.of(1, 1, 1, 1, 1, 1),
                 randomGenerator);
 

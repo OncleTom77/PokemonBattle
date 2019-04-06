@@ -1,7 +1,7 @@
 package com.pokemon;
 
 import com.pokemon.battle.ComputedStatsPokemon;
-import com.pokemon.battle.ComputedStatsPokemonFactory;
+import com.pokemon.battle.PokemonFactory;
 import com.pokemon.battle.Move;
 import com.pokemon.stats.*;
 
@@ -13,34 +13,34 @@ public class Pokemon {
     private final Stats baseStats;
     private final VariantStats variantStats;
     private final Move[] moves;
-    private ComputedStatsPokemonFactory computedStatsPokemonFactory;
+    private PokemonFactory pokemonFactory;
 
     private Pokemon(String name, Type[] types, Nature nature, Stats baseStats,
                     VariantStats variantStats,
                     Move[] moves,
-                    ComputedStatsPokemonFactory computedStatsPokemonFactory) {
+                    PokemonFactory pokemonFactory) {
         this.name = name;
         this.types = types;
         this.nature = nature;
         this.baseStats = baseStats;
         this.variantStats = variantStats;
         this.moves = moves;
-        this.computedStatsPokemonFactory = computedStatsPokemonFactory;
+        this.pokemonFactory = pokemonFactory;
     }
 
     public static Pokemon from(String name, Type[] types, Nature nature, Stats baseStats,
                                Stats individualValues, Stats effortValues, Level level,
                                Move[] moves,
-                               ComputedStatsPokemonFactory computedStatsPokemonFactory) {
+                               PokemonFactory pokemonFactory) {
         return new Pokemon(
                 name, types, nature, baseStats,
                 VariantStats.from(individualValues, effortValues, level),
                 moves,
-                computedStatsPokemonFactory);
+                pokemonFactory);
     }
 
     public ComputedStatsPokemon getComputedStatsPokemon() {
-        return computedStatsPokemonFactory.createFrom(this);
+        return pokemonFactory.createFrom(this);
     }
 
     public Stats getBaseStats() {
@@ -53,5 +53,9 @@ public class Pokemon {
 
     public Nature getNature() {
         return nature;
+    }
+
+    public Move[] getMoves() {
+        return moves;
     }
 }

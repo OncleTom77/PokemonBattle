@@ -1,7 +1,7 @@
 package com.pokemon;
 
 import com.pokemon.battle.ComputedStatsPokemon;
-import com.pokemon.battle.ComputedStatsPokemonFactory;
+import com.pokemon.battle.PokemonFactory;
 import com.pokemon.battle.Move;
 import com.pokemon.stats.*;
 import org.junit.Test;
@@ -13,7 +13,7 @@ public class PokemonTest {
 
     @Test
     public void getComputedStatsPokemon() {
-        ComputedStatsPokemonFactory computedStatsPokemonFactory = mock(ComputedStatsPokemonFactory.class);
+        PokemonFactory pokemonFactory = mock(PokemonFactory.class);
         Pokemon pokemon = Pokemon.from(
                 "Bulbasaur",
                 new Type[]{
@@ -28,14 +28,14 @@ public class PokemonTest {
                 new Move[]{
                         Move.VineWhip
                 },
-                computedStatsPokemonFactory
+                pokemonFactory
         );
         ComputedStatsPokemon mockComputedStatsPokemon = mock(ComputedStatsPokemon.class);
-        when(computedStatsPokemonFactory.createFrom(pokemon)).thenReturn(mockComputedStatsPokemon);
+        when(pokemonFactory.createFrom(pokemon)).thenReturn(mockComputedStatsPokemon);
 
         ComputedStatsPokemon computedStatsPokemon = pokemon.getComputedStatsPokemon();
 
-        verify(computedStatsPokemonFactory).createFrom(pokemon);
+        verify(pokemonFactory).createFrom(pokemon);
         assertThat(computedStatsPokemon).isEqualTo(mockComputedStatsPokemon);
     }
 }
