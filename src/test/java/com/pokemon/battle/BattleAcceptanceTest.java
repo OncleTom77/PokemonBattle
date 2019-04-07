@@ -1,7 +1,13 @@
 package com.pokemon.battle;
 
 import com.pokemon.Pokemon;
-import com.pokemon.stats.*;
+import com.pokemon.moves.Ember;
+import com.pokemon.moves.Move;
+import com.pokemon.moves.VineWhip;
+import com.pokemon.stats.Level;
+import com.pokemon.stats.Nature;
+import com.pokemon.stats.Stats;
+import com.pokemon.stats.Type;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,8 +19,8 @@ public class BattleAcceptanceTest {
         Pokemon bulbasaur = Pokemon.from(
                 "Bulbasaur",
                 new Type[]{
-                        Type.Grass,
-                        Type.Poison
+                        Type.GRASS,
+                        Type.POISON
                 },
                 Nature.Hardy,
                 Stats.of(45, 49, 49, 65, 65, 45),
@@ -22,14 +28,14 @@ public class BattleAcceptanceTest {
                 Stats.of(0, 0, 0, 0, 0, 0),
                 Level.of(15),
                 new Move[]{
-                        Move.VineWhip
+                        new VineWhip()
                 },
                 new PokemonFactory()
         );
         Pokemon charmander = Pokemon.from(
                 "Charmander",
                 new Type[]{
-                        Type.Fire
+                        Type.FIRE
                 },
                 Nature.Docile,
                 Stats.of(39, 52, 43, 60, 50, 65),
@@ -37,7 +43,7 @@ public class BattleAcceptanceTest {
                 Stats.of(0, 0, 0, 0, 0, 0),
                 Level.of(15),
                 new Move[]{
-                        Move.Ember
+                        new Ember()
                 },
                 new PokemonFactory()
         );

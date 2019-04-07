@@ -1,7 +1,11 @@
 package com.pokemon.battle;
 
 import com.pokemon.Pokemon;
-import com.pokemon.stats.*;
+import com.pokemon.moves.Move;
+import com.pokemon.stats.Level;
+import com.pokemon.stats.Nature;
+import com.pokemon.stats.Stats;
+import com.pokemon.stats.Type;
 import org.junit.Test;
 
 import java.util.Random;
@@ -16,8 +20,8 @@ public class ComputedStatPokemonTest {
         Pokemon pokemon = Pokemon.from(
                 "Butterfree",
                 new Type[]{
-                        Type.Bug,
-                        Type.Flying
+                        Type.BUG,
+                        Type.FLYING
                 },
                 Nature.Modest,
                 Stats.of(60, 45, 50, 80, 80, 70),
@@ -25,7 +29,7 @@ public class ComputedStatPokemonTest {
                 Stats.of(4, 0, 0, 254, 0, 252),
                 Level.of(53),
                 new Move[]{
-                        Move.Gust
+                        mock(Move.class)
                 },
                 new PokemonFactory()
         );

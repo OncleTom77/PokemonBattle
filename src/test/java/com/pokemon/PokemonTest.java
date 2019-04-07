@@ -2,8 +2,11 @@ package com.pokemon;
 
 import com.pokemon.battle.ComputedStatsPokemon;
 import com.pokemon.battle.PokemonFactory;
-import com.pokemon.battle.Move;
-import com.pokemon.stats.*;
+import com.pokemon.moves.Move;
+import com.pokemon.stats.Level;
+import com.pokemon.stats.Nature;
+import com.pokemon.stats.Stats;
+import com.pokemon.stats.Type;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,8 +20,8 @@ public class PokemonTest {
         Pokemon pokemon = Pokemon.from(
                 "Bulbasaur",
                 new Type[]{
-                        Type.Grass,
-                        Type.Poison
+                        Type.GRASS,
+                        Type.POISON
                 },
                 Nature.Hardy,
                 Stats.of(45, 49, 49, 65, 65, 45),
@@ -26,7 +29,7 @@ public class PokemonTest {
                 Stats.of(0, 0, 0, 0, 0, 0),
                 Level.of(15),
                 new Move[]{
-                        Move.VineWhip
+                        mock(Move.class)
                 },
                 pokemonFactory
         );

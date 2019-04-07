@@ -1,17 +1,17 @@
 package com.pokemon.stats;
 
 public class Level {
-    private final int level;
+    private final int value;
 
-    private Level(int level) {
-        this.level = level;
+    private Level(int value) {
+        this.value = value;
     }
 
-    public static Level of(int level) {
-        return new Level(level);
+    public static Level of(int value) {
+        return new Level(value);
     }
 
-    public int getLevel() {
-        return level;
+    public int getValue() {
+        return value;
     }
 }

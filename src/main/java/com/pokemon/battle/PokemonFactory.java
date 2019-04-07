@@ -1,6 +1,7 @@
 package com.pokemon.battle;
 
 import com.pokemon.Pokemon;
+import com.pokemon.moves.Move;
 
 public class PokemonFactory {
 

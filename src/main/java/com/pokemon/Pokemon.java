@@ -2,8 +2,13 @@ package com.pokemon;
 
 import com.pokemon.battle.ComputedStatsPokemon;
 import com.pokemon.battle.PokemonFactory;
-import com.pokemon.battle.Move;
-import com.pokemon.stats.*;
+import com.pokemon.moves.Move;
+import com.pokemon.stats.Level;
+import com.pokemon.stats.Nature;
+import com.pokemon.stats.Stats;
+import com.pokemon.stats.Type;
+
+import java.util.stream.Stream;
 
 public class Pokemon {
 
@@ -57,5 +62,14 @@ public class Pokemon {
 
     public Move[] getMoves() {
         return moves;
+    }
+
+    public boolean hasType(Type type) {
+        return Stream.of(types)
+                .anyMatch(t -> t == type);
+    }
+
+    public Type[] getTypes() {
+        return types;
     }
 }

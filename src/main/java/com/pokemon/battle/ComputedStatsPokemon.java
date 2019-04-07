@@ -45,14 +45,14 @@ public class ComputedStatsPokemon {
                 pokemon.getBaseStats().getHp(),
                 pokemon.getVariantStats().getIndividualValues().getHp(),
                 pokemon.getVariantStats().getEffortValues().getHp(),
-                pokemon.getVariantStats().getLevel().getLevel()
+                pokemon.getVariantStats().getLevel().getValue()
         );
 
         int attack = computeOtherStatsFrom(
                 pokemon.getBaseStats().getAttack(),
                 pokemon.getVariantStats().getIndividualValues().getAttack(),
                 pokemon.getVariantStats().getEffortValues().getAttack(),
-                pokemon.getVariantStats().getLevel().getLevel(),
+                pokemon.getVariantStats().getLevel().getValue(),
                 pokemon.getNature().getMultiplierValueFor(Nature.Stat.Attack)
         );
 
@@ -60,7 +60,7 @@ public class ComputedStatsPokemon {
                 pokemon.getBaseStats().getDefense(),
                 pokemon.getVariantStats().getIndividualValues().getDefense(),
                 pokemon.getVariantStats().getEffortValues().getDefense(),
-                pokemon.getVariantStats().getLevel().getLevel(),
+                pokemon.getVariantStats().getLevel().getValue(),
                 pokemon.getNature().getMultiplierValueFor(Nature.Stat.Defense)
         );
 
@@ -68,7 +68,7 @@ public class ComputedStatsPokemon {
                 pokemon.getBaseStats().getSpecialAttack(),
                 pokemon.getVariantStats().getIndividualValues().getSpecialAttack(),
                 pokemon.getVariantStats().getEffortValues().getSpecialAttack(),
-                pokemon.getVariantStats().getLevel().getLevel(),
+                pokemon.getVariantStats().getLevel().getValue(),
                 pokemon.getNature().getMultiplierValueFor(Nature.Stat.SpecialAttack)
         );
 
@@ -76,7 +76,7 @@ public class ComputedStatsPokemon {
                 pokemon.getBaseStats().getSpecialDefense(),
                 pokemon.getVariantStats().getIndividualValues().getSpecialDefense(),
                 pokemon.getVariantStats().getEffortValues().getSpecialDefense(),
-                pokemon.getVariantStats().getLevel().getLevel(),
+                pokemon.getVariantStats().getLevel().getValue(),
                 pokemon.getNature().getMultiplierValueFor(Nature.Stat.SpecialDefense)
         );
 
@@ -84,7 +84,7 @@ public class ComputedStatsPokemon {
                 pokemon.getBaseStats().getSpeed(),
                 pokemon.getVariantStats().getIndividualValues().getSpeed(),
                 pokemon.getVariantStats().getEffortValues().getSpeed(),
-                pokemon.getVariantStats().getLevel().getLevel(),
+                pokemon.getVariantStats().getLevel().getValue(),
                 pokemon.getNature().getMultiplierValueFor(Nature.Stat.Speed)
         );
 
@@ -116,6 +116,10 @@ public class ComputedStatsPokemon {
         return pokemon;
     }
 
+    public Stats getStats() {
+        return stats;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -136,5 +140,9 @@ public class ComputedStatsPokemon {
                 "pokemon=" + pokemon +
                 ", stats=" + stats +
                 '}';
+    }
+
+    public void removeHp(int hp) {
+        throw new UnsupportedOperationException();
     }
 }

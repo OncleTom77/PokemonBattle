@@ -1,5 +1,8 @@
 package com.pokemon.battle;
 
+import com.pokemon.moves.InsufficientPowerPointException;
+import com.pokemon.moves.Move;
+
 public class InTurnPokemon extends ComputedStatsPokemon {
 
     private final Move selectedMove;
@@ -13,7 +16,7 @@ public class InTurnPokemon extends ComputedStatsPokemon {
         return new InTurnPokemon(computedStatsPokemon, selectedMove);
     }
 
-    public void makeMoveOn(InTurnPokemon target) {
-        throw new UnsupportedOperationException();
+    public void makeMoveOn(InTurnPokemon target) throws InsufficientPowerPointException {
+        selectedMove.execute(this, target);
     }
 }

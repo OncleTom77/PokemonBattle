@@ -1,6 +1,7 @@
 package com.pokemon.battle;
 
 import com.pokemon.Pokemon;
+import com.pokemon.moves.Move;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class BattleTest {
         Turn turn = mock(Turn.class);
         Optional<InTurnPokemon> noWinner = Optional.empty();
         Optional<InTurnPokemon> firstWinner = Optional.of(firstInTurnPokemon);
-        Move[] moves = new Move[]{Move.VineWhip};
+        Move[] moves = new Move[]{mock(Move.class)};
 
         when(firstPokemon.getComputedStatsPokemon()).thenReturn(firstComputedStatsPokemon);
         when(secondPokemon.getComputedStatsPokemon()).thenReturn(secondComputedStatsPokemon);
@@ -67,7 +68,7 @@ public class BattleTest {
         Turn turn = mock(Turn.class);
         Optional<InTurnPokemon> noWinner = Optional.empty();
         Optional<InTurnPokemon> secondWinner = Optional.of(secondInTurnPokemon);
-        Move[] moves = new Move[]{Move.VineWhip};
+        Move[] moves = new Move[]{mock(Move.class)};
 
         when(firstPokemon.getComputedStatsPokemon()).thenReturn(firstComputedStatsPokemon);
         when(secondPokemon.getComputedStatsPokemon()).thenReturn(secondComputedStatsPokemon);

@@ -1,6 +1,7 @@
 package com.pokemon;
 
-import com.pokemon.stats.*;
+import com.pokemon.stats.Level;
+import com.pokemon.stats.Stats;
 
 public class VariantStats {
     private final Stats individualValues;
