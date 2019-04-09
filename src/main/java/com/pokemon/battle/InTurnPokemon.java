@@ -3,20 +3,20 @@ package com.pokemon.battle;
 import com.pokemon.moves.InsufficientPowerPointException;
 import com.pokemon.moves.Move;
 
-public class InTurnPokemon extends ComputedStatsPokemon {
+class InTurnPokemon extends ComputedStatsPokemon {
 
     private final Move selectedMove;
 
-    public InTurnPokemon(ComputedStatsPokemon computedStatsPokemon, Move selectedMove) {
+    private InTurnPokemon(ComputedStatsPokemon computedStatsPokemon, Move selectedMove) {
         super(computedStatsPokemon);
         this.selectedMove = selectedMove;
     }
 
-    public static InTurnPokemon from(ComputedStatsPokemon computedStatsPokemon, Move selectedMove) {
+    static InTurnPokemon from(ComputedStatsPokemon computedStatsPokemon, Move selectedMove) {
         return new InTurnPokemon(computedStatsPokemon, selectedMove);
     }
 
-    public void makeMoveOn(InTurnPokemon target) throws InsufficientPowerPointException {
+    void makeMoveOn(InTurnPokemon target) throws InsufficientPowerPointException {
         selectedMove.execute(this, target);
     }
 }

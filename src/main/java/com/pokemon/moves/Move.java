@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 public abstract class Move {
 
-    public static final double SAME_TYPE_ATTACK_BONUS_VALUE = 1.5;
+    private static final double SAME_TYPE_ATTACK_BONUS_VALUE = 1.5;
     private final String name;
     private final String description;
     private final Type type;
@@ -46,7 +46,10 @@ public abstract class Move {
             throw new InsufficientPowerPointException();
         }
 
-        // TODO: check type immunity
+        // Check type immunity
+        if (target.getPokemon().isImmuneTo(type)) {
+            return;
+        }
 
         // Accuracy check
         int randomAccuracyValue = randomGenerator.nextInt(100);

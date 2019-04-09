@@ -23,8 +23,8 @@ public abstract class Type {
     public static Type DARK = new Type(15) {};
     public static Type STEEL = new Type(16) {};
 
-    private static Sensibility[][] matrix = new Sensibility[][]{
-        //           NORMAL     FIRE        WATER       ELECTRIC    GRASS       ICE         FIGHT       POISON      GROUND      FLYING      PSY         BUG         ROCK        GHOST       DRAGON      DARK        STEEL
+    private static Sensibility[][] matrix = new Sensibility[][] {
+    //MOVE / TARGET |NORMAL     FIRE        WATER       ELECTRIC    GRASS       ICE         FIGHT       POISON      GROUND      FLYING      PSY         BUG         ROCK        GHOST       DRAGON      DARK        STEEL
         /*NORMAL*/  {NEUTRAL,   NEUTRAL,    NEUTRAL,    NEUTRAL,    NEUTRAL,    NEUTRAL,    NEUTRAL,    NEUTRAL,    NEUTRAL,    NEUTRAL,    NEUTRAL,    NEUTRAL,    RESISTANT,  IMMUNE,     NEUTRAL,    NEUTRAL,    RESISTANT},
         /*FIRE*/    {NEUTRAL,   RESISTANT,  RESISTANT,  NEUTRAL,    SENSITIVE,  SENSITIVE,  NEUTRAL,    NEUTRAL,    NEUTRAL,    NEUTRAL,    NEUTRAL,    SENSITIVE,  RESISTANT,  NEUTRAL,    RESISTANT,  NEUTRAL,    SENSITIVE},
         /*WATER*/   {NEUTRAL,   SENSITIVE,  RESISTANT,  NEUTRAL,    RESISTANT,  NEUTRAL,    NEUTRAL,    NEUTRAL,    SENSITIVE,  NEUTRAL,    NEUTRAL,    NEUTRAL,    SENSITIVE,  NEUTRAL,    RESISTANT,  NEUTRAL,    NEUTRAL},
@@ -47,11 +47,11 @@ public abstract class Type {
 
     private final int index;
 
-    protected Type(int index) {
+    private Type(int index) {
         this.index = index;
     }
 
     public Sensibility getSensibilityForMoveType(Type type) {
-        return matrix[index][type.index];
+        return matrix[type.index][index];
     }
 }

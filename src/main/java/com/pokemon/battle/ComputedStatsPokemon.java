@@ -24,19 +24,19 @@ public class ComputedStatsPokemon {
         this.randomGenerator = computedStatsPokemon.randomGenerator;
     }
 
-    public static ComputedStatsPokemon from(Pokemon pokemon, Stats stats, Random randomGenerator) {
+    static ComputedStatsPokemon from(Pokemon pokemon, Stats stats, Random randomGenerator) {
         return new ComputedStatsPokemon(pokemon, stats, randomGenerator);
     }
 
-    public static ComputedStatsPokemon from(Pokemon pokemon, Random randomGenerator) {
+    private static ComputedStatsPokemon from(Pokemon pokemon, Random randomGenerator) {
         return from(pokemon, getComputedStats(pokemon), randomGenerator);
     }
 
-    public static ComputedStatsPokemon from(Pokemon pokemon, Stats stats) {
+    static ComputedStatsPokemon from(Pokemon pokemon, Stats stats) {
         return from(pokemon, stats, new Random());
     }
 
-    public static ComputedStatsPokemon from(Pokemon pokemon) {
+    static ComputedStatsPokemon from(Pokemon pokemon) {
         return from(pokemon, new Random());
     }
 
@@ -101,14 +101,14 @@ public class ComputedStatsPokemon {
         return (2 * base + individual + effort) * level / 100 + level + 10;
     }
 
-    public boolean isFasterThan(ComputedStatsPokemon other) {
+    boolean isFasterThan(ComputedStatsPokemon other) {
         if (stats.getSpeed() == other.stats.getSpeed()) {
             return randomGenerator.nextInt(2) == 0;
         }
         return stats.getSpeed() > other.stats.getSpeed();
     }
 
-    public boolean isKO() {
+    boolean isKO() {
         throw new UnsupportedOperationException();
     }
 

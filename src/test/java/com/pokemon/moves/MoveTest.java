@@ -59,6 +59,7 @@ public class MoveTest {
 
         randomGenerator = mock(Random.class);
 
+        when(targetPokemon.isImmuneTo(Type.GRASS)).thenReturn(false);
         when(attacker.getStats()).thenReturn(attackerStats);
         when(attacker.getPokemon()).thenReturn(attackerPokemon);
         when(attackerPokemon.getVariantStats()).thenReturn(attackerVariantStats);
@@ -153,6 +154,7 @@ public class MoveTest {
                 false,
                 randomGenerator
         );
+        verify(target, never()).removeHp(anyInt());
         assertThat(move).isEqualTo(expectedMove);
     }
 
@@ -239,7 +241,7 @@ public class MoveTest {
     }
 
     @Test
-    public void should_inflict_double_damage_to_target_when_the_target_type_is_weak_to_the_move() throws InsufficientPowerPointException {
+    public void should_inflict_double_damage_to_target_when_the_target_type_is_sensible_to_the_move() throws InsufficientPowerPointException {
         Move move = new MoveMock(
                 Type.GRASS,
                 DamageCategory.Physical,
@@ -260,5 +262,58 @@ public class MoveTest {
 
         verify(targetPokemon).getTypes();
         verify(target).removeHp(22);
+    }
+
+    @Test
+    public void should_inflict_half_damage_to_target_when_the_target_type_is_resistant_to_the_move() throws InsufficientPowerPointException {
+        Move move = new MoveMock(
+                Type.GRASS,
+                DamageCategory.Physical,
+                45,
+                100,
+                25,
+                false,
+                randomGenerator
+        );
+
+        when(randomGenerator.nextInt(100)).thenReturn(50);
+        when(attackerLevel.getValue()).thenReturn(20);
+        when(attackerStats.getSpecialAttack()).thenReturn(20);
+        when(targetStats.getSpecialDefense()).thenReturn(10);
+        when(targetType.getSensibilityForMoveType(Type.GRASS)).thenReturn(Sensibility.RESISTANT);
+
+        move.execute(attacker, target);
+
+        verify(targetPokemon).getTypes();
+        verify(target).removeHp(5);
+    }
+
+    @Test
+    public void should_not_inflict_damage_to_target_when_the_target_type_is_immune_to_the_move() throws InsufficientPowerPointException {
+        Move move = new MoveMock(
+                Type.GRASS,
+                DamageCategory.Physical,
+                45,
+                100,
+                25,
+                false,
+                randomGenerator
+        );
+
+        when(targetPokemon.isImmuneTo(Type.GRASS)).thenReturn(true);
+
+        move.execute(attacker, target);
+
+        Move expectedMove = new MoveMock(
+                Type.GRASS,
+                DamageCategory.Physical,
+                45,
+                100,
+                25,
+                false,
+                randomGenerator
+        );
+        assertThat(move).isEqualTo(expectedMove);
+        verify(target, never()).removeHp(anyInt());
     }
 }

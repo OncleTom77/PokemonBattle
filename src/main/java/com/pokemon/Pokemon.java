@@ -3,10 +3,7 @@ package com.pokemon;
 import com.pokemon.battle.ComputedStatsPokemon;
 import com.pokemon.battle.PokemonFactory;
 import com.pokemon.moves.Move;
-import com.pokemon.stats.Level;
-import com.pokemon.stats.Nature;
-import com.pokemon.stats.Stats;
-import com.pokemon.stats.Type;
+import com.pokemon.stats.*;
 
 import java.util.stream.Stream;
 
@@ -67,6 +64,12 @@ public class Pokemon {
     public boolean hasType(Type type) {
         return Stream.of(types)
                 .anyMatch(t -> t == type);
+    }
+
+    public boolean isImmuneTo(Type type) {
+        return Stream.of(types)
+                .map(t -> t.getSensibilityForMoveType(type))
+                .anyMatch(sensibility -> sensibility == Sensibility.IMMUNE);
     }
 
     public Type[] getTypes() {
