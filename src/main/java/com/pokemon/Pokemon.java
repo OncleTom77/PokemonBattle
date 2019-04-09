@@ -45,22 +45,6 @@ public class Pokemon {
         return pokemonFactory.createFrom(this);
     }
 
-    public Stats getBaseStats() {
-        return baseStats;
-    }
-
-    public VariantStats getVariantStats() {
-        return variantStats;
-    }
-
-    public Nature getNature() {
-        return nature;
-    }
-
-    public Move[] getMoves() {
-        return moves;
-    }
-
     public boolean hasType(Type type) {
         return Stream.of(types)
                 .anyMatch(t -> t == type);
@@ -74,5 +58,21 @@ public class Pokemon {
 
     public Type[] getTypes() {
         return types;
+    }
+
+    public Nature getNature() {
+        return nature;
+    }
+
+    public Stats getBaseStats() {
+        return baseStats;
+    }
+
+    public VariantStats getVariantStats() {
+        return variantStats;
+    }
+
+    public Move[] getMoves() {
+        return moves;
     }
 }
