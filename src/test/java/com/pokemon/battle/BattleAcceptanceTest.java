@@ -50,6 +50,6 @@ public class BattleAcceptanceTest {
 
         Pokemon winner = new Battle().fight(bulbasaur, charmander);
 
-        assertThat(winner).isEqualTo(bulbasaur);
+        assertThat(winner).isEqualTo(charmander);
     }
 }

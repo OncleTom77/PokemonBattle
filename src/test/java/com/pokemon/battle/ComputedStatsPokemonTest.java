@@ -13,7 +13,7 @@ import java.util.Random;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ComputedStatPokemonTest {
+public class ComputedStatsPokemonTest {
 
     @Test
     public void should_create_computedStatsPokemon_accordingly_to_given_pokemon() {
@@ -106,5 +106,97 @@ public class ComputedStatPokemonTest {
 
         verify(randomGenerator).nextInt(2);
         assertThat(isFaster).isFalse();
+    }
+
+    @Test
+    public void should_remove_proper_amount_of_hp() {
+        ComputedStatsPokemon computedStatsPokemon = ComputedStatsPokemon.from(
+                mock(Pokemon.class),
+                Stats.of(
+                        100,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1
+                )
+        );
+
+        computedStatsPokemon.removeHp(20);
+
+        Stats expectedStats = Stats.of(
+                80,
+                1,
+                1,
+                1,
+                1,
+                1
+        );
+        assertThat(computedStatsPokemon.getStats()).isEqualTo(expectedStats);
+    }
+
+    @Test
+    public void should_get_0_hp_when_remove_more_hp_than_actual_hp() {
+        ComputedStatsPokemon computedStatsPokemon = ComputedStatsPokemon.from(
+                mock(Pokemon.class),
+                Stats.of(
+                        100,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1
+                )
+        );
+
+        computedStatsPokemon.removeHp(110);
+
+        Stats expectedStats = Stats.of(
+                0,
+                1,
+                1,
+                1,
+                1,
+                1
+        );
+        assertThat(computedStatsPokemon.getStats()).isEqualTo(expectedStats);
+    }
+
+    @Test
+    public void should_be_ko_if_hp_is_equal_to_0() {
+        ComputedStatsPokemon computedStatsPokemon = ComputedStatsPokemon.from(
+                mock(Pokemon.class),
+                Stats.of(
+                        0,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1
+                )
+        );
+
+        boolean ko = computedStatsPokemon.isKO();
+
+        assertThat(ko).isTrue();
+    }
+
+    @Test
+    public void should_not_be_ko_if_hp_is_greater_than_0() {
+        ComputedStatsPokemon computedStatsPokemon = ComputedStatsPokemon.from(
+                mock(Pokemon.class),
+                Stats.of(
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1
+                )
+        );
+
+        boolean ko = computedStatsPokemon.isKO();
+
+        assertThat(ko).isFalse();
     }
 }

@@ -5,6 +5,7 @@ import com.pokemon.battle.PokemonFactory;
 import com.pokemon.moves.Move;
 import com.pokemon.stats.*;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Pokemon {
@@ -74,5 +75,25 @@ public class Pokemon {
 
     public Move[] getMoves() {
         return moves;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pokemon pokemon = (Pokemon) o;
+        return Objects.equals(name, pokemon.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "Pokemon{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

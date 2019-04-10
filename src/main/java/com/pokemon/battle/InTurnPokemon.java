@@ -1,14 +1,16 @@
 package com.pokemon.battle;
 
+import com.pokemon.Pokemon;
 import com.pokemon.moves.InsufficientPowerPointException;
 import com.pokemon.moves.Move;
 
-class InTurnPokemon extends ComputedStatsPokemon {
+class InTurnPokemon {
 
+    private final ComputedStatsPokemon computedStatsPokemon;
     private final Move selectedMove;
 
     private InTurnPokemon(ComputedStatsPokemon computedStatsPokemon, Move selectedMove) {
-        super(computedStatsPokemon);
+        this.computedStatsPokemon = computedStatsPokemon;
         this.selectedMove = selectedMove;
     }
 
@@ -17,6 +19,18 @@ class InTurnPokemon extends ComputedStatsPokemon {
     }
 
     void makeMoveOn(InTurnPokemon target) throws InsufficientPowerPointException {
-        selectedMove.execute(this, target);
+        selectedMove.execute(computedStatsPokemon, target.computedStatsPokemon);
+    }
+
+    boolean isFasterThan(InTurnPokemon secondPokemon) {
+        return computedStatsPokemon.isFasterThan(secondPokemon.computedStatsPokemon);
+    }
+
+    boolean isKO() {
+        return computedStatsPokemon.isKO();
+    }
+
+    public Pokemon getPokemon() {
+        return computedStatsPokemon.getPokemon();
     }
 }

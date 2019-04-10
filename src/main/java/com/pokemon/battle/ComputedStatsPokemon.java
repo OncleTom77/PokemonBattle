@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class ComputedStatsPokemon {
     private final Pokemon pokemon;
-    private final Stats stats;
+    private Stats stats;
     private final Random randomGenerator;
 
     private ComputedStatsPokemon(Pokemon pokemon, Stats stats, Random randomGenerator) {
@@ -109,7 +109,30 @@ public class ComputedStatsPokemon {
     }
 
     boolean isKO() {
-        throw new UnsupportedOperationException();
+        return stats.getHp() <= 0;
+    }
+
+    public void removeHp(int hp) {
+        int newHp = getNewHp(hp);
+
+        stats = Stats.of(
+                newHp,
+                stats.getAttack(),
+                stats.getDefense(),
+                stats.getSpecialAttack(),
+                stats.getSpecialDefense(),
+                stats.getSpeed()
+        );
+    }
+
+    private int getNewHp(int hp) {
+        int currentHp = stats.getHp();
+        int newHp = currentHp - hp;
+
+        if (newHp < 0) {
+            newHp = 0;
+        }
+        return newHp;
     }
 
     public Pokemon getPokemon() {
@@ -140,9 +163,5 @@ public class ComputedStatsPokemon {
                 "pokemon=" + pokemon +
                 ", stats=" + stats +
                 '}';
-    }
-
-    public void removeHp(int hp) {
-        throw new UnsupportedOperationException();
     }
 }
