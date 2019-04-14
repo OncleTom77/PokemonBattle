@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 public abstract class Move {
 
     private static final double SAME_TYPE_ATTACK_BONUS_VALUE = 1.5;
+    public static final double CRITICAL_HIT_BONUS_VALUE = 1.5;
     private final String name;
     private final String description;
     private final Type type;
@@ -60,6 +61,7 @@ public abstract class Move {
         }
 
         // Critical Hit
+        boolean isCriticalHit = isCriticalHit();
 
         // Damage calculation
         int damage = calculateDamageBeforeModifiers(
@@ -68,11 +70,20 @@ public abstract class Move {
                 target.getStats()
         );
 
+        damage = computeCriticalHitModifier(damage, isCriticalHit);
         damage = computeSameTypeAttackBonusModifier(damage, attacker.getPokemon());
         damage = computeTypeSensibilitiesModifier(damage, target.getPokemon().getTypes());
 
         // TODO: multiply damage by random number between 85 and 100 then divide by 100 before apply damage
         target.removeHp(damage);
+    }
+
+    private int computeCriticalHitModifier(int damage, boolean isCriticalHit) {
+        return isCriticalHit ? (int) (damage * CRITICAL_HIT_BONUS_VALUE) : damage;
+    }
+
+    private boolean isCriticalHit() {
+        return randomGenerator.nextInt(16) == 0;
     }
 
     private int computeTypeSensibilitiesModifier(int damage, Type[] targetTypes) {

@@ -74,6 +74,7 @@ public class MoveTest {
         when(attackerStats.getSpecialAttack()).thenReturn(1);
         when(targetStats.getDefense()).thenReturn(1);
         when(targetStats.getSpecialDefense()).thenReturn(1);
+        when(randomGenerator.nextInt(16)).thenReturn(1);
         when(attackerPokemon.hasType(any())).thenReturn(false);
         when(targetPokemon.getTypes()).thenReturn(targetTypes);
         when(targetType.getSensibilityForMoveType(Type.GRASS)).thenReturn(Sensibility.NEUTRAL);
@@ -315,5 +316,29 @@ public class MoveTest {
         );
         assertThat(move).isEqualTo(expectedMove);
         verify(target, never()).removeHp(anyInt());
+    }
+
+    @Test
+    public void should_inflict_50_percent_more_damage_when_it_is_a_critical_hit() {
+        Move move = new MoveMock(
+                Type.GRASS,
+                DamageCategory.Physical,
+                45,
+                100,
+                25,
+                false,
+                randomGenerator
+        );
+
+        when(randomGenerator.nextInt(16)).thenReturn(0);
+        when(randomGenerator.nextInt(100)).thenReturn(50);
+        when(attackerLevel.getValue()).thenReturn(20);
+        when(attackerStats.getAttack()).thenReturn(10);
+        when(targetStats.getDefense()).thenReturn(10);
+
+        move.execute(attacker, target);
+
+        verify(randomGenerator).nextInt(16);
+        verify(target).removeHp(16);
     }
 }
