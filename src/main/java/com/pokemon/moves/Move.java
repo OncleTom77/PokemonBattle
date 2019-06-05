@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public abstract class Move {
 
     private static final double SAME_TYPE_ATTACK_BONUS_VALUE = 1.5;
-    public static final double CRITICAL_HIT_BONUS_VALUE = 1.5;
+    private static final double CRITICAL_HIT_BONUS_VALUE = 1.5;
     private final String name;
     private final String description;
     private final Type type;
@@ -43,7 +43,7 @@ public abstract class Move {
     }
 
     public void execute(ComputedStatsPokemon attacker, ComputedStatsPokemon target) throws InsufficientPowerPointException {
-        if(powerPoint <= 0) {
+        if (powerPoint <= 0) {
             throw new InsufficientPowerPointException();
         }
 
@@ -83,6 +83,8 @@ public abstract class Move {
     }
 
     private boolean isCriticalHit() {
+        // TODO: compute high critical hit ratio moves
+
         return randomGenerator.nextInt(16) == 0;
     }
 

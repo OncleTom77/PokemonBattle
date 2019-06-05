@@ -51,7 +51,7 @@ public abstract class Type {
         this.index = index;
     }
 
-    public Sensibility getSensibilityForMoveType(Type type) {
-        return matrix[type.index][index];
+    public Sensibility getSensibilityForMoveType(Type moveType) {
+        return matrix[moveType.index][index];
     }
 }
