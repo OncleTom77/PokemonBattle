@@ -15,6 +15,8 @@ public abstract class Move {
 
     private static final double SAME_TYPE_ATTACK_BONUS_VALUE = 1.5;
     private static final double CRITICAL_HIT_BONUS_VALUE = 1.5;
+    private static final int RANDOM_DAMAGE_FACTOR_MINIMUM_VALUE = 85;
+    private static final int RANDOM_DAMAGE_FACTOR_BOUND = 16;
     private final String name;
     private final String description;
     private final Type type;
@@ -64,7 +66,7 @@ public abstract class Move {
         boolean isCriticalHit = isCriticalHit();
 
         // Damage calculation
-        int damage = calculateDamageBeforeModifiers(
+        double damage = calculateDamageBeforeModifiers(
                 attacker.getPokemon().getVariantStats().getLevel().getValue(),
                 attacker.getStats(),
                 target.getStats()
@@ -73,13 +75,18 @@ public abstract class Move {
         damage = computeCriticalHitModifier(damage, isCriticalHit);
         damage = computeSameTypeAttackBonusModifier(damage, attacker.getPokemon());
         damage = computeTypeSensibilitiesModifier(damage, target.getPokemon().getTypes());
+        damage = computeRandomDamageFactor(damage);
 
-        // TODO: multiply damage by random number between 85 and 100 then divide by 100 before apply damage
-        target.removeHp(damage);
+        target.removeHp((int) damage);
     }
 
-    private int computeCriticalHitModifier(int damage, boolean isCriticalHit) {
-        return isCriticalHit ? (int) (damage * CRITICAL_HIT_BONUS_VALUE) : damage;
+    private double computeRandomDamageFactor(double damage) {
+        double factor = (RANDOM_DAMAGE_FACTOR_MINIMUM_VALUE + randomGenerator.nextInt(RANDOM_DAMAGE_FACTOR_BOUND)) / 100.;
+        return damage * factor;
+    }
+
+    private double computeCriticalHitModifier(double damage, boolean isCriticalHit) {
+        return isCriticalHit ? damage * CRITICAL_HIT_BONUS_VALUE : damage;
     }
 
     private boolean isCriticalHit() {
@@ -88,7 +95,7 @@ public abstract class Move {
         return randomGenerator.nextInt(16) == 0;
     }
 
-    private int computeTypeSensibilitiesModifier(int damage, Type[] targetTypes) {
+    private double computeTypeSensibilitiesModifier(double damage, Type[] targetTypes) {
         final AtomicReference<Double> modifier = new AtomicReference<>(1.0);
         Stream.of(targetTypes)
                 .forEach(targetType -> {
@@ -98,11 +105,11 @@ public abstract class Move {
                     modifier.set(modifier.get() * damageCoefficient);
                 });
 
-        return (int) (damage * modifier.get());
+        return damage * modifier.get();
     }
 
-    private int computeSameTypeAttackBonusModifier(int damage, Pokemon pokemon) {
-        return pokemon.hasType(type) ? (int) (damage * SAME_TYPE_ATTACK_BONUS_VALUE) : damage;
+    private double computeSameTypeAttackBonusModifier(double damage, Pokemon pokemon) {
+        return pokemon.hasType(type) ? damage * SAME_TYPE_ATTACK_BONUS_VALUE : damage;
     }
 
     private int calculateDamageBeforeModifiers(int attackerLevel, Stats attackerStats, Stats targetStats) {

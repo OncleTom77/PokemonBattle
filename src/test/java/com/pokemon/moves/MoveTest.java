@@ -74,7 +74,7 @@ public class MoveTest {
         when(attackerStats.getSpecialAttack()).thenReturn(1);
         when(targetStats.getDefense()).thenReturn(1);
         when(targetStats.getSpecialDefense()).thenReturn(1);
-        when(randomGenerator.nextInt(16)).thenReturn(1);
+        when(randomGenerator.nextInt(16)).thenReturn(1, 15);
         when(attackerPokemon.hasType(any())).thenReturn(false);
         when(targetPokemon.getTypes()).thenReturn(targetTypes);
         when(targetType.getSensibilityForMoveType(Type.GRASS)).thenReturn(Sensibility.NEUTRAL);
@@ -101,7 +101,7 @@ public class MoveTest {
     }
 
     @Test
-    public void should_reduce_power_point_by_one_when_if_accuracy_value_is_lower_than_accuracy_stats_of_attacker_move() {
+    public void should_reduce_power_point_by_one_when_accuracy_value_is_lower_than_accuracy_stats_of_attacker_move() {
         Move move = new MoveMock(
                 Type.GRASS,
                 DamageCategory.Physical,
@@ -330,7 +330,7 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextInt(16)).thenReturn(0);
+        when(randomGenerator.nextInt(16)).thenReturn(0, 15);
         when(randomGenerator.nextInt(100)).thenReturn(50);
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getAttack()).thenReturn(10);
@@ -338,7 +338,37 @@ public class MoveTest {
 
         move.execute(attacker, target);
 
-        verify(randomGenerator).nextInt(16);
+        verify(randomGenerator, times(2)).nextInt(16);
         verify(target).removeHp(16);
+    }
+
+    @Test
+    public void should_inflict_85_percent_damage_when_random_damage_factor_is_85() {
+        Move move = new MoveMock(
+                Type.GRASS,
+                DamageCategory.Physical,
+                45,
+                100,
+                25,
+                false,
+                randomGenerator
+        );
+
+        when(randomGenerator.nextInt(100)).thenReturn(50);
+        when(randomGenerator.nextInt(16)).thenReturn(1, 0);
+        when(attackerLevel.getValue()).thenReturn(20);
+        when(attackerStats.getAttack()).thenReturn(10);
+        when(targetStats.getDefense()).thenReturn(10);
+
+        move.execute(attacker, target);
+
+        verify(attackerLevel).getValue();
+        verify(attacker).getStats();
+        verify(target).getStats();
+        verify(attackerStats).getAttack();
+        verify(targetStats).getDefense();
+        verify(attackerStats, never()).getSpecialAttack();
+        verify(targetStats, never()).getSpecialDefense();
+        verify(target).removeHp(9);
     }
 }
