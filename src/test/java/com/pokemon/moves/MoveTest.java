@@ -29,17 +29,13 @@ public class MoveTest {
     private Pokemon targetPokemon;
     private Stats targetStats;
 
-    private Random randomGenerator;
+    private MoveRandomGenerator randomGenerator;
     private Type targetType;
     private Type[] targetTypes;
 
     class MoveMock extends Move {
-        MoveMock(String name, String description, Type type, DamageCategory damageCategory, int power, int accuracy, int powerPoint, boolean hasHighCriticalHitRatio, Random randomGenerator) {
-            super(name, description, type, damageCategory, power, accuracy, powerPoint, hasHighCriticalHitRatio, randomGenerator);
-        }
-
-        MoveMock(Type grass, DamageCategory physical, int power, int accuracy, int powerPoint, boolean hasHighCriticalHitRatio, Random randomGenerator) {
-            super("Move Mock", "Move description", grass, physical, power, accuracy, powerPoint, hasHighCriticalHitRatio, randomGenerator);
+        MoveMock(Type type, DamageCategory damageCategory, int power, int accuracy, int powerPoint, boolean hasHighCriticalHitRatio, MoveRandomGenerator randomGenerator) {
+            super("Move Mock", "Move description", type, damageCategory, power, accuracy, powerPoint, hasHighCriticalHitRatio, randomGenerator);
         }
     }
 
@@ -57,7 +53,7 @@ public class MoveTest {
         targetType = mock(Type.class);
         targetTypes = new Type[]{targetType};
 
-        randomGenerator = mock(Random.class);
+        randomGenerator = mock(MoveRandomGenerator.class);
 
         when(targetPokemon.isImmuneTo(Type.GRASS)).thenReturn(false);
         when(attacker.getStats()).thenReturn(attackerStats);
@@ -74,7 +70,9 @@ public class MoveTest {
         when(attackerStats.getSpecialAttack()).thenReturn(1);
         when(targetStats.getDefense()).thenReturn(1);
         when(targetStats.getSpecialDefense()).thenReturn(1);
-        when(randomGenerator.nextInt(16)).thenReturn(1, 15);
+        when(randomGenerator.nextAccuracyValue()).thenReturn(50);
+        when(randomGenerator.nextCriticalHitValue()).thenReturn(1);
+        when(randomGenerator.nextDamageFactor()).thenReturn(1.);
         when(attackerPokemon.hasType(any())).thenReturn(false);
         when(targetPokemon.getTypes()).thenReturn(targetTypes);
         when(targetType.getSensibilityForMoveType(Type.GRASS)).thenReturn(Sensibility.NEUTRAL);
@@ -96,7 +94,7 @@ public class MoveTest {
             move.execute(attacker, target);
             fail("Expected InsufficientPowerPointException");
         } catch (InsufficientPowerPointException e) {
-            verify(randomGenerator, never()).nextInt(100);
+            verify(randomGenerator, never()).nextAccuracyValue();
         }
     }
 
@@ -112,11 +110,11 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextInt(100)).thenReturn(49);
+        when(randomGenerator.nextAccuracyValue()).thenReturn(49);
 
         move.execute(attacker, target);
 
-        verify(randomGenerator).nextInt(100);
+        verify(randomGenerator).nextAccuracyValue();
         Move expectedMove = new MoveMock(
                 Type.GRASS,
                 DamageCategory.Physical,
@@ -141,11 +139,8 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextInt(100)).thenReturn(50);
-
         move.execute(attacker, target);
 
-        verify(randomGenerator).nextInt(100);
         Move expectedMove = new MoveMock(
                 Type.GRASS,
                 DamageCategory.Physical,
@@ -171,7 +166,6 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextInt(100)).thenReturn(50);
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getAttack()).thenReturn(10);
         when(targetStats.getDefense()).thenReturn(10);
@@ -200,7 +194,6 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextInt(100)).thenReturn(50);
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getSpecialAttack()).thenReturn(20);
         when(targetStats.getSpecialDefense()).thenReturn(10);
@@ -229,7 +222,6 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextInt(100)).thenReturn(50);
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getSpecialAttack()).thenReturn(20);
         when(targetStats.getSpecialDefense()).thenReturn(10);
@@ -253,7 +245,6 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextInt(100)).thenReturn(50);
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getSpecialAttack()).thenReturn(20);
         when(targetStats.getSpecialDefense()).thenReturn(10);
@@ -277,7 +268,6 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextInt(100)).thenReturn(50);
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getSpecialAttack()).thenReturn(20);
         when(targetStats.getSpecialDefense()).thenReturn(10);
@@ -330,15 +320,14 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextInt(16)).thenReturn(0, 15);
-        when(randomGenerator.nextInt(100)).thenReturn(50);
+        when(randomGenerator.nextCriticalHitValue()).thenReturn(0);
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getAttack()).thenReturn(10);
         when(targetStats.getDefense()).thenReturn(10);
 
         move.execute(attacker, target);
 
-        verify(randomGenerator, times(2)).nextInt(16);
+        verify(randomGenerator, times(1)).nextCriticalHitValue();
         verify(target).removeHp(16);
     }
 
@@ -354,8 +343,7 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextInt(100)).thenReturn(50);
-        when(randomGenerator.nextInt(16)).thenReturn(1, 0);
+        when(randomGenerator.nextDamageFactor()).thenReturn(.85);
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getAttack()).thenReturn(10);
         when(targetStats.getDefense()).thenReturn(10);

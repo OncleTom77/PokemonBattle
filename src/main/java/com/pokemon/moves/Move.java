@@ -7,7 +7,6 @@ import com.pokemon.stats.Stats;
 import com.pokemon.stats.Type;
 
 import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
@@ -26,13 +25,13 @@ public abstract class Move {
     private int powerPoint;
     private final boolean hasHighCriticalHitRatio;
 
-    private final Random randomGenerator;
+    private final MoveRandomGenerator randomGenerator;
 
     Move(String name, String description, Type type, DamageCategory damageCategory, int power, int accuracy, int powerPoint, boolean hasHighCriticalHitRatio) {
-        this(name, description, type, damageCategory, power, accuracy, powerPoint, hasHighCriticalHitRatio, new Random());
+        this(name, description, type, damageCategory, power, accuracy, powerPoint, hasHighCriticalHitRatio, new MoveRandomGenerator());
     }
 
-    public Move(String name, String description, Type type, DamageCategory damageCategory, int power, int accuracy, int powerPoint, boolean hasHighCriticalHitRatio, Random randomGenerator) {
+    public Move(String name, String description, Type type, DamageCategory damageCategory, int power, int accuracy, int powerPoint, boolean hasHighCriticalHitRatio, MoveRandomGenerator randomGenerator) {
         this.name = name;
         this.description = description;
         this.type = type;
@@ -55,7 +54,7 @@ public abstract class Move {
         }
 
         // Accuracy check
-        int randomAccuracyValue = randomGenerator.nextInt(100);
+        int randomAccuracyValue = randomGenerator.nextAccuracyValue();
         if (randomAccuracyValue >= accuracy) {
             return;
         } else {
@@ -81,7 +80,7 @@ public abstract class Move {
     }
 
     private double computeRandomDamageFactor(double damage) {
-        double factor = (RANDOM_DAMAGE_FACTOR_MINIMUM_VALUE + randomGenerator.nextInt(RANDOM_DAMAGE_FACTOR_BOUND)) / 100.;
+        double factor = randomGenerator.nextDamageFactor();
         return damage * factor;
     }
 
@@ -92,7 +91,7 @@ public abstract class Move {
     private boolean isCriticalHit() {
         // TODO: compute high critical hit ratio moves
 
-        return randomGenerator.nextInt(16) == 0;
+        return randomGenerator.nextCriticalHitValue() == 0;
     }
 
     private double computeTypeSensibilitiesModifier(double damage, Type[] targetTypes) {
