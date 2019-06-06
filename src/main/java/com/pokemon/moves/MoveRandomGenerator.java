@@ -6,6 +6,7 @@ class MoveRandomGenerator {
 
     private static final int ACCURACY_BOUND = 100;
     private static final int CRITICAL_HIT_BOUND = 16;
+    private static final int HIGH_CRITICAL_HIT_BOUND = 8;
     private static final int DAMAGE_FACTOR_MINIMUM_VALUE = 85;
     private static final int DAMAGE_FACTOR_BOUND = 16;
 
@@ -23,8 +24,9 @@ class MoveRandomGenerator {
         return randomGenerator.nextInt(ACCURACY_BOUND);
     }
 
-    int nextCriticalHitValue() {
-        return randomGenerator.nextInt(CRITICAL_HIT_BOUND);
+    int nextCriticalHitValue(boolean hasHighCriticalHitRatio) {
+        int bound = hasHighCriticalHitRatio ? HIGH_CRITICAL_HIT_BOUND : CRITICAL_HIT_BOUND;
+        return randomGenerator.nextInt(bound);
     }
 
     double nextDamageFactor() {

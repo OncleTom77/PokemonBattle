@@ -11,8 +11,6 @@ import com.pokemon.stats.Type;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Random;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.*;
@@ -71,7 +69,7 @@ public class MoveTest {
         when(targetStats.getDefense()).thenReturn(1);
         when(targetStats.getSpecialDefense()).thenReturn(1);
         when(randomGenerator.nextAccuracyValue()).thenReturn(50);
-        when(randomGenerator.nextCriticalHitValue()).thenReturn(1);
+        when(randomGenerator.nextCriticalHitValue(false)).thenReturn(1);
         when(randomGenerator.nextDamageFactor()).thenReturn(1.);
         when(attackerPokemon.hasType(any())).thenReturn(false);
         when(targetPokemon.getTypes()).thenReturn(targetTypes);
@@ -320,15 +318,32 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextCriticalHitValue()).thenReturn(0);
+        when(randomGenerator.nextCriticalHitValue(false)).thenReturn(0);
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getAttack()).thenReturn(10);
         when(targetStats.getDefense()).thenReturn(10);
 
         move.execute(attacker, target);
 
-        verify(randomGenerator, times(1)).nextCriticalHitValue();
+        verify(randomGenerator, times(1)).nextCriticalHitValue(false);
         verify(target).removeHp(16);
+    }
+
+    @Test
+    public void should_get_next_critical_hit_value_with_high_critical_hit_ratio_when_the_move_has_high_ciritcal_hit_ratio() {
+        Move move = new MoveMock(
+                Type.GRASS,
+                DamageCategory.Physical,
+                45,
+                100,
+                25,
+                true,
+                randomGenerator
+        );
+
+        move.execute(attacker, target);
+
+        verify(randomGenerator, times(1)).nextCriticalHitValue(true);
     }
 
     @Test
@@ -350,13 +365,6 @@ public class MoveTest {
 
         move.execute(attacker, target);
 
-        verify(attackerLevel).getValue();
-        verify(attacker).getStats();
-        verify(target).getStats();
-        verify(attackerStats).getAttack();
-        verify(targetStats).getDefense();
-        verify(attackerStats, never()).getSpecialAttack();
-        verify(targetStats, never()).getSpecialDefense();
         verify(target).removeHp(9);
     }
 }

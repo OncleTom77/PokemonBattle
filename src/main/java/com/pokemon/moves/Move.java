@@ -14,8 +14,6 @@ public abstract class Move {
 
     private static final double SAME_TYPE_ATTACK_BONUS_VALUE = 1.5;
     private static final double CRITICAL_HIT_BONUS_VALUE = 1.5;
-    private static final int RANDOM_DAMAGE_FACTOR_MINIMUM_VALUE = 85;
-    private static final int RANDOM_DAMAGE_FACTOR_BOUND = 16;
     private final String name;
     private final String description;
     private final Type type;
@@ -89,9 +87,7 @@ public abstract class Move {
     }
 
     private boolean isCriticalHit() {
-        // TODO: compute high critical hit ratio moves
-
-        return randomGenerator.nextCriticalHitValue() == 0;
+        return randomGenerator.nextCriticalHitValue(hasHighCriticalHitRatio) == 0;
     }
 
     private double computeTypeSensibilitiesModifier(double damage, Type[] targetTypes) {
