@@ -1,6 +1,7 @@
 package com.pokemon.battle;
 
-import com.pokemon.Pokemon;
+import com.pokemon.pokemon.GeneratedPokemon;
+import com.pokemon.pokemon.PokemonFactory;
 
 import java.util.Optional;
 
@@ -19,26 +20,16 @@ class Battle {
         this.pokemonFactory = pokemonFactory;
     }
 
-    Pokemon fight(Pokemon a, Pokemon b) {
-        ComputedStatsPokemon aComputedStatsPokemon = a.getComputedStatsPokemon();
-        ComputedStatsPokemon bComputedStatsPokemon = b.getComputedStatsPokemon();
-
+    GeneratedPokemon fight(GeneratedPokemon a, GeneratedPokemon b) {
         while (true) {
-            InTurnPokemon aInTurnPokemon = pokemonFactory.createFrom(
-                    aComputedStatsPokemon,
-                    aComputedStatsPokemon.getPokemon().getMoves()[0]
-            );
-
-            InTurnPokemon bInTurnPokemon = pokemonFactory.createFrom(
-                    bComputedStatsPokemon,
-                    bComputedStatsPokemon.getPokemon().getMoves()[0]
-            );
+            InTurnPokemon aInTurnPokemon = pokemonFactory.createFrom(a, a.getMove(0));
+            InTurnPokemon bInTurnPokemon = pokemonFactory.createFrom(b, b.getMove(0));
 
             Optional<InTurnPokemon> potentialWinner = turnFactory.createFrom(aInTurnPokemon, bInTurnPokemon)
                     .resolveWithPotentialWinner();
 
             if (potentialWinner.isPresent()) {
-                return potentialWinner.get().getPokemon();
+                return potentialWinner.get().getGeneratedPokemon();
             }
         }
     }

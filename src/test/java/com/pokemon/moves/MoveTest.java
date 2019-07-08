@@ -1,8 +1,7 @@
 package com.pokemon.moves;
 
-import com.pokemon.Pokemon;
-import com.pokemon.VariantStats;
-import com.pokemon.battle.ComputedStatsPokemon;
+import com.pokemon.pokemon.GeneratedPokemon;
+import com.pokemon.pokemon.InGameStats;
 import com.pokemon.battle.DamageCategory;
 import com.pokemon.stats.Level;
 import com.pokemon.stats.Sensibility;
@@ -17,14 +16,13 @@ import static org.mockito.Mockito.*;
 
 public class MoveTest {
 
-    private ComputedStatsPokemon attacker;
-    private Pokemon attackerPokemon;
-    private VariantStats attackerVariantStats;
+    private GeneratedPokemon attacker;
     private Level attackerLevel;
+    private InGameStats attackerInGameStats;
     private Stats attackerStats;
 
-    private ComputedStatsPokemon target;
-    private Pokemon targetPokemon;
+    private GeneratedPokemon target;
+    private InGameStats targetInGameStats;
     private Stats targetStats;
 
     private MoveRandomGenerator randomGenerator;
@@ -39,27 +37,25 @@ public class MoveTest {
 
     @Before
     public void setUp() throws Exception {
-        attacker = mock(ComputedStatsPokemon.class);
-        attackerPokemon = mock(Pokemon.class);
-        attackerVariantStats = mock(VariantStats.class);
+        attacker = mock(GeneratedPokemon.class);
         attackerLevel = mock(Level.class);
+        attackerInGameStats = mock(InGameStats.class);
         attackerStats = mock(Stats.class);
 
-        target = mock(ComputedStatsPokemon.class);
-        targetPokemon = mock(Pokemon.class);
+        target = mock(GeneratedPokemon.class);
+        targetInGameStats = mock(InGameStats.class);
         targetStats = mock(Stats.class);
         targetType = mock(Type.class);
         targetTypes = new Type[]{targetType};
 
         randomGenerator = mock(MoveRandomGenerator.class);
 
-        when(targetPokemon.isImmuneTo(Type.GRASS)).thenReturn(false);
-        when(attacker.getStats()).thenReturn(attackerStats);
-        when(attacker.getPokemon()).thenReturn(attackerPokemon);
-        when(attackerPokemon.getVariantStats()).thenReturn(attackerVariantStats);
-        when(attackerVariantStats.getLevel()).thenReturn(attackerLevel);
-        when(target.getStats()).thenReturn(targetStats);
-        when(target.getPokemon()).thenReturn(targetPokemon);
+        when(target.isImmuneTo(Type.GRASS)).thenReturn(false);
+        when(attacker.getInGameStats()).thenReturn(attackerInGameStats);
+        when(attackerInGameStats.getCurrentStats()).thenReturn(attackerStats);
+        when(attacker.getLevel()).thenReturn(attackerLevel);
+        when(target.getInGameStats()).thenReturn(targetInGameStats);
+        when(targetInGameStats.getCurrentStats()).thenReturn(targetStats);
 
         doNothing().when(target).removeHp(anyInt());
 
@@ -71,8 +67,8 @@ public class MoveTest {
         when(randomGenerator.nextAccuracyValue()).thenReturn(50);
         when(randomGenerator.nextCriticalHitValue(false)).thenReturn(1);
         when(randomGenerator.nextDamageFactor()).thenReturn(1.);
-        when(attackerPokemon.hasType(any())).thenReturn(false);
-        when(targetPokemon.getTypes()).thenReturn(targetTypes);
+        when(attacker.hasType(any())).thenReturn(false);
+        when(target.getTypes()).thenReturn(targetTypes);
         when(targetType.getSensibilityForMoveType(Type.GRASS)).thenReturn(Sensibility.NEUTRAL);
     }
 
@@ -171,8 +167,8 @@ public class MoveTest {
         move.execute(attacker, target);
 
         verify(attackerLevel).getValue();
-        verify(attacker).getStats();
-        verify(target).getStats();
+        verify(attacker).getInGameStats();
+        verify(targetInGameStats).getCurrentStats();
         verify(attackerStats).getAttack();
         verify(targetStats).getDefense();
         verify(attackerStats, never()).getSpecialAttack();
@@ -199,8 +195,10 @@ public class MoveTest {
         move.execute(attacker, target);
 
         verify(attackerLevel).getValue();
-        verify(attacker).getStats();
-        verify(target).getStats();
+        verify(attacker).getInGameStats();
+        verify(attackerInGameStats).getCurrentStats();
+        verify(target).getInGameStats();
+        verify(targetInGameStats).getCurrentStats();
         verify(attackerStats, never()).getAttack();
         verify(targetStats, never()).getDefense();
         verify(attackerStats).getSpecialAttack();
@@ -223,11 +221,11 @@ public class MoveTest {
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getSpecialAttack()).thenReturn(20);
         when(targetStats.getSpecialDefense()).thenReturn(10);
-        when(attackerPokemon.hasType(Type.GRASS)).thenReturn(true);
+        when(attacker.hasType(Type.GRASS)).thenReturn(true);
 
         move.execute(attacker, target);
 
-        verify(attackerPokemon).hasType(Type.GRASS);
+        verify(attacker).hasType(Type.GRASS);
         verify(target).removeHp(16);
     }
 
@@ -250,7 +248,7 @@ public class MoveTest {
 
         move.execute(attacker, target);
 
-        verify(targetPokemon).getTypes();
+        verify(target).getTypes();
         verify(target).removeHp(22);
     }
 
@@ -273,7 +271,7 @@ public class MoveTest {
 
         move.execute(attacker, target);
 
-        verify(targetPokemon).getTypes();
+        verify(target).getTypes();
         verify(target).removeHp(5);
     }
 
@@ -289,7 +287,7 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(targetPokemon.isImmuneTo(Type.GRASS)).thenReturn(true);
+        when(target.isImmuneTo(Type.GRASS)).thenReturn(true);
 
         move.execute(attacker, target);
 

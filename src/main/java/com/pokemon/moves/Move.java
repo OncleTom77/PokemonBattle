@@ -1,7 +1,6 @@
 package com.pokemon.moves;
 
-import com.pokemon.Pokemon;
-import com.pokemon.battle.ComputedStatsPokemon;
+import com.pokemon.pokemon.GeneratedPokemon;
 import com.pokemon.battle.DamageCategory;
 import com.pokemon.stats.Stats;
 import com.pokemon.stats.Type;
@@ -14,6 +13,7 @@ public abstract class Move {
 
     private static final double SAME_TYPE_ATTACK_BONUS_VALUE = 1.5;
     private static final double CRITICAL_HIT_BONUS_VALUE = 1.5;
+
     private final String name;
     private final String description;
     private final Type type;
@@ -41,13 +41,13 @@ public abstract class Move {
         this.randomGenerator = randomGenerator;
     }
 
-    public void execute(ComputedStatsPokemon attacker, ComputedStatsPokemon target) throws InsufficientPowerPointException {
+    public void execute(GeneratedPokemon attacker, GeneratedPokemon target) throws InsufficientPowerPointException {
         if (powerPoint <= 0) {
             throw new InsufficientPowerPointException();
         }
 
         // Check type immunity
-        if (target.getPokemon().isImmuneTo(type)) {
+        if (target.isImmuneTo(type)) {
             return;
         }
 
@@ -64,14 +64,14 @@ public abstract class Move {
 
         // Damage calculation
         double damage = calculateDamageBeforeModifiers(
-                attacker.getPokemon().getVariantStats().getLevel().getValue(),
-                attacker.getStats(),
-                target.getStats()
+                attacker.getLevel().getValue(),
+                attacker.getInGameStats().getCurrentStats(),
+                target.getInGameStats().getCurrentStats()
         );
 
         damage = computeCriticalHitModifier(damage, isCriticalHit);
-        damage = computeSameTypeAttackBonusModifier(damage, attacker.getPokemon());
-        damage = computeTypeSensibilitiesModifier(damage, target.getPokemon().getTypes());
+        damage = computeSameTypeAttackBonusModifier(damage, attacker);
+        damage = computeTypeSensibilitiesModifier(damage, target.getTypes());
         damage = computeRandomDamageFactor(damage);
 
         target.removeHp((int) damage);
@@ -103,7 +103,7 @@ public abstract class Move {
         return damage * modifier.get();
     }
 
-    private double computeSameTypeAttackBonusModifier(double damage, Pokemon pokemon) {
+    private double computeSameTypeAttackBonusModifier(double damage, GeneratedPokemon pokemon) {
         return pokemon.hasType(type) ? damage * SAME_TYPE_ATTACK_BONUS_VALUE : damage;
     }
 
