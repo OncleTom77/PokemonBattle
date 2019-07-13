@@ -31,8 +31,12 @@ public abstract class Pokemon {
                 .anyMatch(sensibility -> sensibility == Sensibility.IMMUNE);
     }
 
-    Type[] getTypes() {
-        return types;
+    Double getSensibilityFactorToType(Type moveType) {
+        return Stream.of(types)
+                .mapToDouble(targetType -> targetType
+                        .getSensibilityForMoveType(moveType)
+                        .getDamageCoefficient())
+                .reduce(1.0, (a, b) -> a * b);
     }
 
     Stats getBaseStats() {

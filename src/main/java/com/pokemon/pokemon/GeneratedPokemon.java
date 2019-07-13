@@ -162,7 +162,7 @@ public class GeneratedPokemon {
         return pokemon.isImmuneTo(type);
     }
 
-    public Type[] getTypes() {
-        return pokemon.getTypes();
+    public Double getSensibilityFactorToType(Type moveType) {
+        return pokemon.getSensibilityFactorToType(moveType);
     }
 }

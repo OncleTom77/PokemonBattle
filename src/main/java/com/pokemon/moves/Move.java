@@ -6,8 +6,6 @@ import com.pokemon.stats.Stats;
 import com.pokemon.stats.Type;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
 
 public abstract class Move {
 
@@ -71,7 +69,7 @@ public abstract class Move {
 
         damage = computeCriticalHitModifier(damage, isCriticalHit);
         damage = computeSameTypeAttackBonusModifier(damage, attacker);
-        damage = computeTypeSensibilitiesModifier(damage, target.getTypes());
+        damage = computeTypeSensibilitiesModifier(damage, target);
         damage = computeRandomDamageFactor(damage);
 
         target.removeHp((int) damage);
@@ -90,17 +88,10 @@ public abstract class Move {
         return randomGenerator.nextCriticalHitValue(hasHighCriticalHitRatio) == 0;
     }
 
-    private double computeTypeSensibilitiesModifier(double damage, Type[] targetTypes) {
-        final AtomicReference<Double> modifier = new AtomicReference<>(1.0);
-        Stream.of(targetTypes)
-                .forEach(targetType -> {
-                    double damageCoefficient = targetType
-                            .getSensibilityForMoveType(type)
-                            .getDamageCoefficient();
-                    modifier.set(modifier.get() * damageCoefficient);
-                });
+    private double computeTypeSensibilitiesModifier(double damage, GeneratedPokemon target) {
+        Double finalModifier = target.getSensibilityFactorToType(type);
 
-        return damage * modifier.get();
+        return damage * finalModifier;
     }
 
     private double computeSameTypeAttackBonusModifier(double damage, GeneratedPokemon pokemon) {

@@ -26,8 +26,6 @@ public class MoveTest {
     private Stats targetStats;
 
     private MoveRandomGenerator randomGenerator;
-    private Type targetType;
-    private Type[] targetTypes;
 
     class MoveMock extends Move {
         MoveMock(Type type, DamageCategory damageCategory, int power, int accuracy, int powerPoint, boolean hasHighCriticalHitRatio, MoveRandomGenerator randomGenerator) {
@@ -45,8 +43,6 @@ public class MoveTest {
         target = mock(GeneratedPokemon.class);
         targetInGameStats = mock(InGameStats.class);
         targetStats = mock(Stats.class);
-        targetType = mock(Type.class);
-        targetTypes = new Type[]{targetType};
 
         randomGenerator = mock(MoveRandomGenerator.class);
 
@@ -68,8 +64,7 @@ public class MoveTest {
         when(randomGenerator.nextCriticalHitValue(false)).thenReturn(1);
         when(randomGenerator.nextDamageFactor()).thenReturn(1.);
         when(attacker.hasType(any())).thenReturn(false);
-        when(target.getTypes()).thenReturn(targetTypes);
-        when(targetType.getSensibilityForMoveType(Type.GRASS)).thenReturn(Sensibility.NEUTRAL);
+        when(target.getSensibilityFactorToType(any(Type.class))).thenReturn(1.0);
     }
 
     @Test
@@ -244,11 +239,11 @@ public class MoveTest {
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getSpecialAttack()).thenReturn(20);
         when(targetStats.getSpecialDefense()).thenReturn(10);
-        when(targetType.getSensibilityForMoveType(Type.GRASS)).thenReturn(Sensibility.SENSITIVE);
+        when(target.getSensibilityFactorToType(Type.GRASS)).thenReturn(2.0);
 
         move.execute(attacker, target);
 
-        verify(target).getTypes();
+        verify(target).getSensibilityFactorToType(Type.GRASS);
         verify(target).removeHp(22);
     }
 
@@ -267,11 +262,11 @@ public class MoveTest {
         when(attackerLevel.getValue()).thenReturn(20);
         when(attackerStats.getSpecialAttack()).thenReturn(20);
         when(targetStats.getSpecialDefense()).thenReturn(10);
-        when(targetType.getSensibilityForMoveType(Type.GRASS)).thenReturn(Sensibility.RESISTANT);
+        when(target.getSensibilityFactorToType(Type.GRASS)).thenReturn(0.5);
 
         move.execute(attacker, target);
 
-        verify(target).getTypes();
+        verify(target).getSensibilityFactorToType(Type.GRASS);
         verify(target).removeHp(5);
     }
 

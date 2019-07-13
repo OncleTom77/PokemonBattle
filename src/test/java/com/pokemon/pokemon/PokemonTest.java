@@ -1,12 +1,14 @@
 package com.pokemon.pokemon;
 
-import com.pokemon.pokemon.Pokemon;
-import com.pokemon.stats.*;
+import com.pokemon.stats.Sensibility;
+import com.pokemon.stats.Stats;
+import com.pokemon.stats.Type;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PokemonTest {
 
@@ -16,7 +18,7 @@ public class PokemonTest {
     private Pokemon pokemon;
 
     private class PokemonMock extends Pokemon {
-        protected PokemonMock(String name, Type[] types, Stats baseStats) {
+        PokemonMock(String name, Type[] types, Stats baseStats) {
             super(name, types, baseStats);
         }
     }
@@ -74,5 +76,18 @@ public class PokemonTest {
         boolean isImmune = pokemon.isImmuneTo(moveType);
 
         assertThat(isImmune).isFalse();
+    }
+
+    @Test
+    public void should_get_sensibility_factor_to_move_type_as_multiplication_of_each_pokemon_type_sensibility_factor_to_move_type() {
+        Type moveType = thirdType;
+
+        when(firstType.getSensibilityForMoveType(moveType)).thenReturn(Sensibility.NEUTRAL);
+        when(secondType.getSensibilityForMoveType(moveType)).thenReturn(Sensibility.RESISTANT);
+
+        Double factor = pokemon.getSensibilityFactorToType(moveType);
+
+        Double expectedFactor = Sensibility.NEUTRAL.getDamageCoefficient() * Sensibility.RESISTANT.getDamageCoefficient();
+        assertThat(factor).isEqualTo(expectedFactor);
     }
 }
