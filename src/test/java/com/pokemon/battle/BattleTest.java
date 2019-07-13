@@ -1,7 +1,7 @@
 package com.pokemon.battle;
 
-import com.pokemon.pokemon.GeneratedPokemon;
 import com.pokemon.moves.Move;
+import com.pokemon.pokemon.GeneratedPokemon;
 import com.pokemon.pokemon.PokemonFactory;
 import org.junit.Before;
 import org.junit.Test;

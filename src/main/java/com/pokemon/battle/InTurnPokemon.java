@@ -1,8 +1,8 @@
 package com.pokemon.battle;
 
-import com.pokemon.pokemon.GeneratedPokemon;
 import com.pokemon.moves.InsufficientPowerPointException;
 import com.pokemon.moves.Move;
+import com.pokemon.pokemon.GeneratedPokemon;
 
 public class InTurnPokemon {
 

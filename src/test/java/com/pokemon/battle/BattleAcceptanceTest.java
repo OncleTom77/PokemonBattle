@@ -1,11 +1,11 @@
 package com.pokemon.battle;
 
-import com.pokemon.pokemon.GeneratedPokemon;
 import com.pokemon.moves.Ember;
 import com.pokemon.moves.Move;
 import com.pokemon.moves.VineWhip;
 import com.pokemon.pokemon.Bulbasaur;
 import com.pokemon.pokemon.Charmander;
+import com.pokemon.pokemon.GeneratedPokemon;
 import com.pokemon.stats.Level;
 import com.pokemon.stats.Nature;
 import com.pokemon.stats.Stats;

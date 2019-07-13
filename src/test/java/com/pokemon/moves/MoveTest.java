@@ -1,10 +1,9 @@
 package com.pokemon.moves;
 
+import com.pokemon.battle.DamageCategory;
 import com.pokemon.pokemon.GeneratedPokemon;
 import com.pokemon.pokemon.InGameStats;
-import com.pokemon.battle.DamageCategory;
 import com.pokemon.stats.Level;
-import com.pokemon.stats.Sensibility;
 import com.pokemon.stats.Stats;
 import com.pokemon.stats.Type;
 import org.junit.Before;

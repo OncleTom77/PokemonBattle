@@ -1,6 +1,5 @@
 package com.pokemon.pokemon;
 
-import com.pokemon.pokemon.InGameStats;
 import com.pokemon.stats.Stats;
 import org.junit.Before;
 import org.junit.Test;
