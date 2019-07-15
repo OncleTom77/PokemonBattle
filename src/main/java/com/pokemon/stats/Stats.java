@@ -1,5 +1,7 @@
 package com.pokemon.stats;
 
+import com.pokemon.battle.DamageCategory;
+
 import java.util.Objects;
 
 public class Stats {
@@ -26,6 +28,18 @@ public class Stats {
 
     public static Stats of(Stats stats) {
         return of(stats.hp, stats.attack, stats.defense, stats.specialAttack, stats.specialDefense, stats.speed);
+    }
+
+    public int getOffensiveStatForDamageCategory(DamageCategory damageCategory) {
+        return damageCategory == DamageCategory.Physical
+                ? attack
+                : specialAttack;
+    }
+
+    public int getDefensiveStatForDamageCategory(DamageCategory damageCategory) {
+        return damageCategory == DamageCategory.Physical
+                ? defense
+                : specialDefense;
     }
 
     public int getHp() {

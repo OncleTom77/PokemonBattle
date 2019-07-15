@@ -2,7 +2,6 @@ package com.pokemon.moves;
 
 import com.pokemon.battle.DamageCategory;
 import com.pokemon.pokemon.GeneratedPokemon;
-import com.pokemon.stats.Stats;
 import com.pokemon.stats.Type;
 
 import java.util.Objects;
@@ -63,8 +62,8 @@ public abstract class Move {
         // Damage calculation
         double damage = calculateDamageBeforeModifiers(
                 attacker.getLevel().getValue(),
-                attacker.getInGameStats().getCurrentStats(),
-                target.getInGameStats().getCurrentStats()
+                attacker.getOffensiveStatForDamageCategory(damageCategory),
+                target.getDefensiveStatForDamageCategory(damageCategory)
         );
 
         damage = computeCriticalHitModifier(damage, isCriticalHit);
@@ -98,23 +97,8 @@ public abstract class Move {
         return pokemon.hasType(type) ? damage * SAME_TYPE_ATTACK_BONUS_VALUE : damage;
     }
 
-    private int calculateDamageBeforeModifiers(int attackerLevel, Stats attackerStats, Stats targetStats) {
-        int offensiveStat = getOffensiveStat(attackerStats);
-        int defensiveStat = getDefensiveStat(targetStats);
-
-        return (((2 * attackerLevel / 5 + 2) * offensiveStat * power / defensiveStat) / 50) + 2;
-    }
-
-    private int getOffensiveStat(Stats stats) {
-        return damageCategory == DamageCategory.Physical
-                ? stats.getAttack()
-                : stats.getSpecialAttack();
-    }
-
-    private int getDefensiveStat(Stats stats) {
-        return damageCategory == DamageCategory.Physical
-                ? stats.getDefense()
-                : stats.getSpecialDefense();
+    private int calculateDamageBeforeModifiers(int attackerLevel, int attackerOffensiveStat, int targetDefensiveStat) {
+        return (((2 * attackerLevel / 5 + 2) * attackerOffensiveStat * power / targetDefensiveStat) / 50) + 2;
     }
 
     @Override

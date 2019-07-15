@@ -1,5 +1,6 @@
 package com.pokemon.pokemon;
 
+import com.pokemon.battle.DamageCategory;
 import com.pokemon.stats.Stats;
 
 import java.util.Objects;
@@ -73,8 +74,12 @@ public class InGameStats {
         return currentStats.getSpeed() > other.currentStats.getSpeed();
     }
 
-    public Stats getCurrentStats() {
-        return currentStats;
+    int getOffensiveStatForDamageCategory(DamageCategory damageCategory) {
+        return currentStats.getOffensiveStatForDamageCategory(damageCategory);
+    }
+
+    int getDefensiveStatForDamageCategory(DamageCategory damageCategory) {
+        return currentStats.getDefensiveStatForDamageCategory(damageCategory);
     }
 
     @Override

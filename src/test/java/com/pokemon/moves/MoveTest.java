@@ -2,9 +2,7 @@ package com.pokemon.moves;
 
 import com.pokemon.battle.DamageCategory;
 import com.pokemon.pokemon.GeneratedPokemon;
-import com.pokemon.pokemon.InGameStats;
 import com.pokemon.stats.Level;
-import com.pokemon.stats.Stats;
 import com.pokemon.stats.Type;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,12 +15,8 @@ public class MoveTest {
 
     private GeneratedPokemon attacker;
     private Level attackerLevel;
-    private InGameStats attackerInGameStats;
-    private Stats attackerStats;
 
     private GeneratedPokemon target;
-    private InGameStats targetInGameStats;
-    private Stats targetStats;
 
     private MoveRandomGenerator randomGenerator;
 
@@ -33,37 +27,26 @@ public class MoveTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         attacker = mock(GeneratedPokemon.class);
         attackerLevel = mock(Level.class);
-        attackerInGameStats = mock(InGameStats.class);
-        attackerStats = mock(Stats.class);
-
         target = mock(GeneratedPokemon.class);
-        targetInGameStats = mock(InGameStats.class);
-        targetStats = mock(Stats.class);
-
         randomGenerator = mock(MoveRandomGenerator.class);
-
-        when(target.isImmuneTo(Type.GRASS)).thenReturn(false);
-        when(attacker.getInGameStats()).thenReturn(attackerInGameStats);
-        when(attackerInGameStats.getCurrentStats()).thenReturn(attackerStats);
-        when(attacker.getLevel()).thenReturn(attackerLevel);
-        when(target.getInGameStats()).thenReturn(targetInGameStats);
-        when(targetInGameStats.getCurrentStats()).thenReturn(targetStats);
 
         doNothing().when(target).removeHp(anyInt());
 
+        when(attacker.getLevel()).thenReturn(attackerLevel);
         when(attackerLevel.getValue()).thenReturn(1);
-        when(attackerStats.getAttack()).thenReturn(1);
-        when(attackerStats.getSpecialAttack()).thenReturn(1);
-        when(targetStats.getDefense()).thenReturn(1);
-        when(targetStats.getSpecialDefense()).thenReturn(1);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(1);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(1);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(1);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(1);
         when(randomGenerator.nextAccuracyValue()).thenReturn(50);
         when(randomGenerator.nextCriticalHitValue(false)).thenReturn(1);
         when(randomGenerator.nextDamageFactor()).thenReturn(1.);
         when(attacker.hasType(any())).thenReturn(false);
         when(target.getSensibilityFactorToType(any(Type.class))).thenReturn(1.0);
+        when(target.isImmuneTo(Type.GRASS)).thenReturn(false);
     }
 
     @Test
@@ -87,7 +70,7 @@ public class MoveTest {
     }
 
     @Test
-    public void should_reduce_power_point_by_one_when_accuracy_value_is_lower_than_accuracy_stats_of_attacker_move() {
+    public void should_reduce_power_point_by_one_when_accuracy_value_is_lower_than_accuracy_stat_of_attacker_move() {
         Move move = new MoveMock(
                 Type.GRASS,
                 DamageCategory.Physical,
@@ -116,7 +99,7 @@ public class MoveTest {
     }
 
     @Test
-    public void should_not_hit_target_if_accuracy_value_is_greater_than_or_equal_accuracy_stats_of_attacker_move() {
+    public void should_not_hit_target_if_accuracy_value_is_greater_than_or_equal_accuracy_stat_of_attacker_move() {
         Move move = new MoveMock(
                 Type.GRASS,
                 DamageCategory.Physical,
@@ -155,18 +138,16 @@ public class MoveTest {
         );
 
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getAttack()).thenReturn(10);
-        when(targetStats.getDefense()).thenReturn(10);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
 
         move.execute(attacker, target);
 
         verify(attackerLevel).getValue();
-        verify(attacker).getInGameStats();
-        verify(targetInGameStats).getCurrentStats();
-        verify(attackerStats).getAttack();
-        verify(targetStats).getDefense();
-        verify(attackerStats, never()).getSpecialAttack();
-        verify(targetStats, never()).getSpecialDefense();
+        verify(attacker).getOffensiveStatForDamageCategory(DamageCategory.Physical);
+        verify(attacker, never()).getOffensiveStatForDamageCategory(DamageCategory.Special);
+        verify(target).getDefensiveStatForDamageCategory(DamageCategory.Physical);
+        verify(target, never()).getDefensiveStatForDamageCategory(DamageCategory.Special);
         verify(target).removeHp(11);
     }
 
@@ -183,20 +164,16 @@ public class MoveTest {
         );
 
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getSpecialAttack()).thenReturn(20);
-        when(targetStats.getSpecialDefense()).thenReturn(10);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(20);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(10);
 
         move.execute(attacker, target);
 
         verify(attackerLevel).getValue();
-        verify(attacker).getInGameStats();
-        verify(attackerInGameStats).getCurrentStats();
-        verify(target).getInGameStats();
-        verify(targetInGameStats).getCurrentStats();
-        verify(attackerStats, never()).getAttack();
-        verify(targetStats, never()).getDefense();
-        verify(attackerStats).getSpecialAttack();
-        verify(targetStats).getSpecialDefense();
+        verify(attacker).getOffensiveStatForDamageCategory(DamageCategory.Special);
+        verify(attacker, never()).getOffensiveStatForDamageCategory(DamageCategory.Physical);
+        verify(target).getDefensiveStatForDamageCategory(DamageCategory.Special);
+        verify(target, never()).getDefensiveStatForDamageCategory(DamageCategory.Physical);
         verify(target).removeHp(20);
     }
 
@@ -213,8 +190,8 @@ public class MoveTest {
         );
 
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getSpecialAttack()).thenReturn(20);
-        when(targetStats.getSpecialDefense()).thenReturn(10);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(20);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(10);
         when(attacker.hasType(Type.GRASS)).thenReturn(true);
 
         move.execute(attacker, target);
@@ -236,8 +213,8 @@ public class MoveTest {
         );
 
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getSpecialAttack()).thenReturn(20);
-        when(targetStats.getSpecialDefense()).thenReturn(10);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(20);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(10);
         when(target.getSensibilityFactorToType(Type.GRASS)).thenReturn(2.0);
 
         move.execute(attacker, target);
@@ -259,8 +236,8 @@ public class MoveTest {
         );
 
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getSpecialAttack()).thenReturn(20);
-        when(targetStats.getSpecialDefense()).thenReturn(10);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(20);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(10);
         when(target.getSensibilityFactorToType(Type.GRASS)).thenReturn(0.5);
 
         move.execute(attacker, target);
@@ -312,8 +289,8 @@ public class MoveTest {
 
         when(randomGenerator.nextCriticalHitValue(false)).thenReturn(0);
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getAttack()).thenReturn(10);
-        when(targetStats.getDefense()).thenReturn(10);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
 
         move.execute(attacker, target);
 
@@ -352,8 +329,8 @@ public class MoveTest {
 
         when(randomGenerator.nextDamageFactor()).thenReturn(.85);
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getAttack()).thenReturn(10);
-        when(targetStats.getDefense()).thenReturn(10);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
 
         move.execute(attacker, target);
 

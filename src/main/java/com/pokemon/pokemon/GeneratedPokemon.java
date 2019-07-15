@@ -1,5 +1,6 @@
 package com.pokemon.pokemon;
 
+import com.pokemon.battle.DamageCategory;
 import com.pokemon.moves.Move;
 import com.pokemon.stats.Level;
 import com.pokemon.stats.Nature;
@@ -19,7 +20,7 @@ public class GeneratedPokemon {
     // Change in game
     private Stats effortValues;
     private Level level;
-    protected Move[] moves;
+    private Move[] moves;
     private InGameStats inGameStats;
 
     private GeneratedPokemon(Pokemon pokemon, Nature nature, Stats individualValues, Stats effortValues, Level level, Move[] moves, Random randomGenerator) {
@@ -130,6 +131,7 @@ public class GeneratedPokemon {
         return (2 * base + individual + effort) * level / 100 + level + 10;
     }
 
+
     public boolean isFasterThan(GeneratedPokemon other) {
         return inGameStats.isOwnSpeedAboveOther(other.inGameStats);
     }
@@ -142,16 +144,12 @@ public class GeneratedPokemon {
         inGameStats.removeHp(hp);
     }
 
-    public InGameStats getInGameStats() {
-        return inGameStats;
+    public int getOffensiveStatForDamageCategory(DamageCategory damageCategory) {
+        return inGameStats.getOffensiveStatForDamageCategory(damageCategory);
     }
 
-    public Level getLevel() {
-        return level;
-    }
-
-    public Move getMove(int position) {
-        return moves[position];
+    public int getDefensiveStatForDamageCategory(DamageCategory damageCategory) {
+        return inGameStats.getDefensiveStatForDamageCategory(damageCategory);
     }
 
     public boolean hasType(Type type) {
@@ -164,5 +162,17 @@ public class GeneratedPokemon {
 
     public Double getSensibilityFactorToType(Type moveType) {
         return pokemon.getSensibilityFactorToType(moveType);
+    }
+
+    InGameStats getInGameStats() {
+        return inGameStats;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public Move getMove(int position) {
+        return moves[position];
     }
 }
