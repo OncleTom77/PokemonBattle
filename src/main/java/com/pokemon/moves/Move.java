@@ -1,21 +1,16 @@
 package com.pokemon.moves;
 
-import com.pokemon.Pokemon;
-import com.pokemon.battle.ComputedStatsPokemon;
 import com.pokemon.battle.DamageCategory;
-import com.pokemon.stats.Stats;
+import com.pokemon.pokemon.GeneratedPokemon;
 import com.pokemon.stats.Type;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
 
 public abstract class Move {
 
     private static final double SAME_TYPE_ATTACK_BONUS_VALUE = 1.5;
     private static final double CRITICAL_HIT_BONUS_VALUE = 1.5;
-    private static final int RANDOM_DAMAGE_FACTOR_MINIMUM_VALUE = 85;
-    private static final int RANDOM_DAMAGE_FACTOR_BOUND = 16;
+
     private final String name;
     private final String description;
     private final Type type;
@@ -43,13 +38,13 @@ public abstract class Move {
         this.randomGenerator = randomGenerator;
     }
 
-    public void execute(ComputedStatsPokemon attacker, ComputedStatsPokemon target) throws InsufficientPowerPointException {
+    public void execute(GeneratedPokemon attacker, GeneratedPokemon target) throws InsufficientPowerPointException {
         if (powerPoint <= 0) {
             throw new InsufficientPowerPointException();
         }
 
         // Check type immunity
-        if (target.getPokemon().isImmuneTo(type)) {
+        if (target.isImmuneTo(type)) {
             return;
         }
 
@@ -66,14 +61,14 @@ public abstract class Move {
 
         // Damage calculation
         double damage = calculateDamageBeforeModifiers(
-                attacker.getPokemon().getVariantStats().getLevel().getValue(),
-                attacker.getStats(),
-                target.getStats()
+                attacker.getLevel().getValue(),
+                attacker.getOffensiveStatForDamageCategory(damageCategory),
+                target.getDefensiveStatForDamageCategory(damageCategory)
         );
 
         damage = computeCriticalHitModifier(damage, isCriticalHit);
-        damage = computeSameTypeAttackBonusModifier(damage, attacker.getPokemon());
-        damage = computeTypeSensibilitiesModifier(damage, target.getPokemon().getTypes());
+        damage = computeSameTypeAttackBonusModifier(damage, attacker);
+        damage = computeTypeSensibilitiesModifier(damage, target);
         damage = computeRandomDamageFactor(damage);
 
         target.removeHp((int) damage);
@@ -89,45 +84,21 @@ public abstract class Move {
     }
 
     private boolean isCriticalHit() {
-        // TODO: compute high critical hit ratio moves
-
-        return randomGenerator.nextCriticalHitValue() == 0;
+        return randomGenerator.nextCriticalHitValue(hasHighCriticalHitRatio) == 0;
     }
 
-    private double computeTypeSensibilitiesModifier(double damage, Type[] targetTypes) {
-        final AtomicReference<Double> modifier = new AtomicReference<>(1.0);
-        Stream.of(targetTypes)
-                .forEach(targetType -> {
-                    double damageCoefficient = targetType
-                            .getSensibilityForMoveType(type)
-                            .getDamageCoefficient();
-                    modifier.set(modifier.get() * damageCoefficient);
-                });
+    private double computeTypeSensibilitiesModifier(double damage, GeneratedPokemon target) {
+        Double finalModifier = target.getSensibilityFactorToType(type);
 
-        return damage * modifier.get();
+        return damage * finalModifier;
     }
 
-    private double computeSameTypeAttackBonusModifier(double damage, Pokemon pokemon) {
+    private double computeSameTypeAttackBonusModifier(double damage, GeneratedPokemon pokemon) {
         return pokemon.hasType(type) ? damage * SAME_TYPE_ATTACK_BONUS_VALUE : damage;
     }
 
-    private int calculateDamageBeforeModifiers(int attackerLevel, Stats attackerStats, Stats targetStats) {
-        int offensiveStat = getOffensiveStat(attackerStats);
-        int defensiveStat = getDefensiveStat(targetStats);
-
-        return (((2 * attackerLevel / 5 + 2) * offensiveStat * power / defensiveStat) / 50) + 2;
-    }
-
-    private int getOffensiveStat(Stats stats) {
-        return damageCategory == DamageCategory.Physical
-                ? stats.getAttack()
-                : stats.getSpecialAttack();
-    }
-
-    private int getDefensiveStat(Stats stats) {
-        return damageCategory == DamageCategory.Physical
-                ? stats.getDefense()
-                : stats.getSpecialDefense();
+    private int calculateDamageBeforeModifiers(int attackerLevel, int attackerOffensiveStat, int targetDefensiveStat) {
+        return (((2 * attackerLevel / 5 + 2) * attackerOffensiveStat * power / targetDefensiveStat) / 50) + 2;
     }
 
     @Override

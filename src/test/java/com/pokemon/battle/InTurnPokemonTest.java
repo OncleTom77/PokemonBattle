@@ -1,6 +1,7 @@
 package com.pokemon.battle;
 
 import com.pokemon.moves.Move;
+import com.pokemon.pokemon.GeneratedPokemon;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
@@ -11,12 +12,12 @@ public class InTurnPokemonTest {
     @Test
     public void should_call_move_execute_method() {
         Move selectedMove = mock(Move.class);
-        ComputedStatsPokemon firstComputedStatsPokemon = mock(ComputedStatsPokemon.class);
+        GeneratedPokemon firstComputedStatsPokemon = mock(GeneratedPokemon.class);
         InTurnPokemon firstInTurnPokemon = InTurnPokemon.from(
                 firstComputedStatsPokemon,
                 selectedMove
         );
-        ComputedStatsPokemon secondComputedStatsPokemon = mock(ComputedStatsPokemon.class);
+        GeneratedPokemon secondComputedStatsPokemon = mock(GeneratedPokemon.class);
         InTurnPokemon secondInTurnPokemon = InTurnPokemon.from(
                 secondComputedStatsPokemon,
                 selectedMove

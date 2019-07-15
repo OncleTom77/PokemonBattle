@@ -1,36 +1,36 @@
 package com.pokemon.battle;
 
-import com.pokemon.Pokemon;
 import com.pokemon.moves.InsufficientPowerPointException;
 import com.pokemon.moves.Move;
+import com.pokemon.pokemon.GeneratedPokemon;
 
-class InTurnPokemon {
+public class InTurnPokemon {
 
-    private final ComputedStatsPokemon computedStatsPokemon;
+    private final GeneratedPokemon generatedPokemon;
     private final Move selectedMove;
 
-    private InTurnPokemon(ComputedStatsPokemon computedStatsPokemon, Move selectedMove) {
-        this.computedStatsPokemon = computedStatsPokemon;
+    private InTurnPokemon(GeneratedPokemon generatedPokemon, Move selectedMove) {
+        this.generatedPokemon = generatedPokemon;
         this.selectedMove = selectedMove;
     }
 
-    static InTurnPokemon from(ComputedStatsPokemon computedStatsPokemon, Move selectedMove) {
-        return new InTurnPokemon(computedStatsPokemon, selectedMove);
+    public static InTurnPokemon from(GeneratedPokemon pokemon, Move selectedMove) {
+        return new InTurnPokemon(pokemon, selectedMove);
     }
 
     void makeMoveOn(InTurnPokemon target) throws InsufficientPowerPointException {
-        selectedMove.execute(computedStatsPokemon, target.computedStatsPokemon);
+        selectedMove.execute(generatedPokemon, target.generatedPokemon);
+    }
+
+    GeneratedPokemon getGeneratedPokemon() {
+        return generatedPokemon;
     }
 
     boolean isFasterThan(InTurnPokemon secondPokemon) {
-        return computedStatsPokemon.isFasterThan(secondPokemon.computedStatsPokemon);
+        return generatedPokemon.isFasterThan(secondPokemon.generatedPokemon);
     }
 
     boolean isKO() {
-        return computedStatsPokemon.isKO();
-    }
-
-    public Pokemon getPokemon() {
-        return computedStatsPokemon.getPokemon();
+        return generatedPokemon.isKO();
     }
 }

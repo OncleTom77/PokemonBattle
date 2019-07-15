@@ -1,17 +1,11 @@
 package com.pokemon.moves;
 
-import com.pokemon.Pokemon;
-import com.pokemon.VariantStats;
-import com.pokemon.battle.ComputedStatsPokemon;
 import com.pokemon.battle.DamageCategory;
+import com.pokemon.pokemon.GeneratedPokemon;
 import com.pokemon.stats.Level;
-import com.pokemon.stats.Sensibility;
-import com.pokemon.stats.Stats;
 import com.pokemon.stats.Type;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -19,19 +13,12 @@ import static org.mockito.Mockito.*;
 
 public class MoveTest {
 
-    private ComputedStatsPokemon attacker;
-    private Pokemon attackerPokemon;
-    private VariantStats attackerVariantStats;
+    private GeneratedPokemon attacker;
     private Level attackerLevel;
-    private Stats attackerStats;
 
-    private ComputedStatsPokemon target;
-    private Pokemon targetPokemon;
-    private Stats targetStats;
+    private GeneratedPokemon target;
 
     private MoveRandomGenerator randomGenerator;
-    private Type targetType;
-    private Type[] targetTypes;
 
     class MoveMock extends Move {
         MoveMock(Type type, DamageCategory damageCategory, int power, int accuracy, int powerPoint, boolean hasHighCriticalHitRatio, MoveRandomGenerator randomGenerator) {
@@ -40,42 +27,26 @@ public class MoveTest {
     }
 
     @Before
-    public void setUp() throws Exception {
-        attacker = mock(ComputedStatsPokemon.class);
-        attackerPokemon = mock(Pokemon.class);
-        attackerVariantStats = mock(VariantStats.class);
+    public void setUp() {
+        attacker = mock(GeneratedPokemon.class);
         attackerLevel = mock(Level.class);
-        attackerStats = mock(Stats.class);
-
-        target = mock(ComputedStatsPokemon.class);
-        targetPokemon = mock(Pokemon.class);
-        targetStats = mock(Stats.class);
-        targetType = mock(Type.class);
-        targetTypes = new Type[]{targetType};
-
+        target = mock(GeneratedPokemon.class);
         randomGenerator = mock(MoveRandomGenerator.class);
-
-        when(targetPokemon.isImmuneTo(Type.GRASS)).thenReturn(false);
-        when(attacker.getStats()).thenReturn(attackerStats);
-        when(attacker.getPokemon()).thenReturn(attackerPokemon);
-        when(attackerPokemon.getVariantStats()).thenReturn(attackerVariantStats);
-        when(attackerVariantStats.getLevel()).thenReturn(attackerLevel);
-        when(target.getStats()).thenReturn(targetStats);
-        when(target.getPokemon()).thenReturn(targetPokemon);
 
         doNothing().when(target).removeHp(anyInt());
 
+        when(attacker.getLevel()).thenReturn(attackerLevel);
         when(attackerLevel.getValue()).thenReturn(1);
-        when(attackerStats.getAttack()).thenReturn(1);
-        when(attackerStats.getSpecialAttack()).thenReturn(1);
-        when(targetStats.getDefense()).thenReturn(1);
-        when(targetStats.getSpecialDefense()).thenReturn(1);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(1);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(1);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(1);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(1);
         when(randomGenerator.nextAccuracyValue()).thenReturn(50);
-        when(randomGenerator.nextCriticalHitValue()).thenReturn(1);
+        when(randomGenerator.nextCriticalHitValue(false)).thenReturn(1);
         when(randomGenerator.nextDamageFactor()).thenReturn(1.);
-        when(attackerPokemon.hasType(any())).thenReturn(false);
-        when(targetPokemon.getTypes()).thenReturn(targetTypes);
-        when(targetType.getSensibilityForMoveType(Type.GRASS)).thenReturn(Sensibility.NEUTRAL);
+        when(attacker.hasType(any())).thenReturn(false);
+        when(target.getSensibilityFactorToType(any(Type.class))).thenReturn(1.0);
+        when(target.isImmuneTo(Type.GRASS)).thenReturn(false);
     }
 
     @Test
@@ -99,7 +70,7 @@ public class MoveTest {
     }
 
     @Test
-    public void should_reduce_power_point_by_one_when_accuracy_value_is_lower_than_accuracy_stats_of_attacker_move() {
+    public void should_reduce_power_point_by_one_when_accuracy_value_is_lower_than_accuracy_stat_of_attacker_move() {
         Move move = new MoveMock(
                 Type.GRASS,
                 DamageCategory.Physical,
@@ -128,7 +99,7 @@ public class MoveTest {
     }
 
     @Test
-    public void should_not_hit_target_if_accuracy_value_is_greater_than_or_equal_accuracy_stats_of_attacker_move() {
+    public void should_not_hit_target_if_accuracy_value_is_greater_than_or_equal_accuracy_stat_of_attacker_move() {
         Move move = new MoveMock(
                 Type.GRASS,
                 DamageCategory.Physical,
@@ -167,18 +138,16 @@ public class MoveTest {
         );
 
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getAttack()).thenReturn(10);
-        when(targetStats.getDefense()).thenReturn(10);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
 
         move.execute(attacker, target);
 
         verify(attackerLevel).getValue();
-        verify(attacker).getStats();
-        verify(target).getStats();
-        verify(attackerStats).getAttack();
-        verify(targetStats).getDefense();
-        verify(attackerStats, never()).getSpecialAttack();
-        verify(targetStats, never()).getSpecialDefense();
+        verify(attacker).getOffensiveStatForDamageCategory(DamageCategory.Physical);
+        verify(attacker, never()).getOffensiveStatForDamageCategory(DamageCategory.Special);
+        verify(target).getDefensiveStatForDamageCategory(DamageCategory.Physical);
+        verify(target, never()).getDefensiveStatForDamageCategory(DamageCategory.Special);
         verify(target).removeHp(11);
     }
 
@@ -195,18 +164,16 @@ public class MoveTest {
         );
 
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getSpecialAttack()).thenReturn(20);
-        when(targetStats.getSpecialDefense()).thenReturn(10);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(20);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(10);
 
         move.execute(attacker, target);
 
         verify(attackerLevel).getValue();
-        verify(attacker).getStats();
-        verify(target).getStats();
-        verify(attackerStats, never()).getAttack();
-        verify(targetStats, never()).getDefense();
-        verify(attackerStats).getSpecialAttack();
-        verify(targetStats).getSpecialDefense();
+        verify(attacker).getOffensiveStatForDamageCategory(DamageCategory.Special);
+        verify(attacker, never()).getOffensiveStatForDamageCategory(DamageCategory.Physical);
+        verify(target).getDefensiveStatForDamageCategory(DamageCategory.Special);
+        verify(target, never()).getDefensiveStatForDamageCategory(DamageCategory.Physical);
         verify(target).removeHp(20);
     }
 
@@ -223,13 +190,13 @@ public class MoveTest {
         );
 
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getSpecialAttack()).thenReturn(20);
-        when(targetStats.getSpecialDefense()).thenReturn(10);
-        when(attackerPokemon.hasType(Type.GRASS)).thenReturn(true);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(20);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(10);
+        when(attacker.hasType(Type.GRASS)).thenReturn(true);
 
         move.execute(attacker, target);
 
-        verify(attackerPokemon).hasType(Type.GRASS);
+        verify(attacker).hasType(Type.GRASS);
         verify(target).removeHp(16);
     }
 
@@ -246,13 +213,13 @@ public class MoveTest {
         );
 
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getSpecialAttack()).thenReturn(20);
-        when(targetStats.getSpecialDefense()).thenReturn(10);
-        when(targetType.getSensibilityForMoveType(Type.GRASS)).thenReturn(Sensibility.SENSITIVE);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(20);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(10);
+        when(target.getSensibilityFactorToType(Type.GRASS)).thenReturn(2.0);
 
         move.execute(attacker, target);
 
-        verify(targetPokemon).getTypes();
+        verify(target).getSensibilityFactorToType(Type.GRASS);
         verify(target).removeHp(22);
     }
 
@@ -269,13 +236,13 @@ public class MoveTest {
         );
 
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getSpecialAttack()).thenReturn(20);
-        when(targetStats.getSpecialDefense()).thenReturn(10);
-        when(targetType.getSensibilityForMoveType(Type.GRASS)).thenReturn(Sensibility.RESISTANT);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(20);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Special)).thenReturn(10);
+        when(target.getSensibilityFactorToType(Type.GRASS)).thenReturn(0.5);
 
         move.execute(attacker, target);
 
-        verify(targetPokemon).getTypes();
+        verify(target).getSensibilityFactorToType(Type.GRASS);
         verify(target).removeHp(5);
     }
 
@@ -291,7 +258,7 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(targetPokemon.isImmuneTo(Type.GRASS)).thenReturn(true);
+        when(target.isImmuneTo(Type.GRASS)).thenReturn(true);
 
         move.execute(attacker, target);
 
@@ -320,15 +287,32 @@ public class MoveTest {
                 randomGenerator
         );
 
-        when(randomGenerator.nextCriticalHitValue()).thenReturn(0);
+        when(randomGenerator.nextCriticalHitValue(false)).thenReturn(0);
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getAttack()).thenReturn(10);
-        when(targetStats.getDefense()).thenReturn(10);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
 
         move.execute(attacker, target);
 
-        verify(randomGenerator, times(1)).nextCriticalHitValue();
+        verify(randomGenerator, times(1)).nextCriticalHitValue(false);
         verify(target).removeHp(16);
+    }
+
+    @Test
+    public void should_get_next_critical_hit_value_with_high_critical_hit_ratio_when_the_move_has_high_ciritcal_hit_ratio() {
+        Move move = new MoveMock(
+                Type.GRASS,
+                DamageCategory.Physical,
+                45,
+                100,
+                25,
+                true,
+                randomGenerator
+        );
+
+        move.execute(attacker, target);
+
+        verify(randomGenerator, times(1)).nextCriticalHitValue(true);
     }
 
     @Test
@@ -345,18 +329,11 @@ public class MoveTest {
 
         when(randomGenerator.nextDamageFactor()).thenReturn(.85);
         when(attackerLevel.getValue()).thenReturn(20);
-        when(attackerStats.getAttack()).thenReturn(10);
-        when(targetStats.getDefense()).thenReturn(10);
+        when(attacker.getOffensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
+        when(target.getDefensiveStatForDamageCategory(DamageCategory.Physical)).thenReturn(10);
 
         move.execute(attacker, target);
 
-        verify(attackerLevel).getValue();
-        verify(attacker).getStats();
-        verify(target).getStats();
-        verify(attackerStats).getAttack();
-        verify(targetStats).getDefense();
-        verify(attackerStats, never()).getSpecialAttack();
-        verify(targetStats, never()).getSpecialDefense();
         verify(target).removeHp(9);
     }
 }

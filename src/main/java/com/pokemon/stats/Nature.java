@@ -1,16 +1,24 @@
 package com.pokemon.stats;
 
-public enum Nature {
-    Docile(Stat.None, Stat.None),
-    Hardy(Stat.None, Stat.None),
-    Modest(Stat.SpecialAttack, Stat.Attack);
+public abstract class Nature {
+
+    // @formatter:off
+    public static Nature DOCILE = new Nature() {};
+    public static Nature HARDY = new Nature() {};
+    public static Nature MODEST = new Nature(Stat.SpecialAttack, Stat.Attack) {};
+    // @formatter:on
 
     private final Stat increasedStat;
     private final Stat decreasedStat;
 
-    Nature(Stat increasedStat, Stat decreasedStat) {
+    protected Nature(Stat increasedStat, Stat decreasedStat) {
         this.increasedStat = increasedStat;
         this.decreasedStat = decreasedStat;
+    }
+
+    protected Nature() {
+        this.increasedStat = null;
+        this.decreasedStat = null;
     }
 
     public float getMultiplierValueFor(Stat stat) {
@@ -24,6 +32,6 @@ public enum Nature {
     }
 
     public enum Stat {
-        Attack, Defense, SpecialAttack, SpecialDefense, Speed, None
+        Attack, Defense, SpecialAttack, SpecialDefense, Speed
     }
 }

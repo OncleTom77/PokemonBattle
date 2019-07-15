@@ -35,10 +35,19 @@ public class MoveRandomGeneratorTest {
 
         when(random.nextInt(16)).thenReturn(15);
 
-        int value = randomGenerator.nextCriticalHitValue();
+        int value = randomGenerator.nextCriticalHitValue(false);
 
         verify(random).nextInt(16);
         assertThat(value).isEqualTo(15);
+    }
+
+    @Test
+    public void should_get_twice_chance_of_being_critical_hit_move_when_move_has_high_critical_hit_ratio() {
+        MoveRandomGenerator randomGenerator = new MoveRandomGenerator(random);
+
+        randomGenerator.nextCriticalHitValue(true);
+
+        verify(random).nextInt(8);
     }
 
     @Test
